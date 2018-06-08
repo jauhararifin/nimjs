@@ -62,7 +62,6 @@ export class Nic implements INic {
         let student = {
             username: undefined,
             name: undefined,
-            nim: undefined,
             tpbNim: undefined,
             email: undefined,
             ai3Email: undefined,
@@ -78,7 +77,8 @@ export class Nic implements INic {
             else if (i == 5) {
                 let nim = value.split(",").map(x => x.trim())
                 student.tpbNim = nim[0]
-                student.nim = nim.length < 2 ? student.tpbNim : nim[1]
+                if (nim.length > 1)
+                    student['nim'] = nim[1]
             } else if (i == 8)
                 student.name = value.trim()
             else if (i == 14)
