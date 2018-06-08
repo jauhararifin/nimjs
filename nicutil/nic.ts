@@ -55,16 +55,38 @@ export class Nic {
         if (!response)
             throw new Error('Error fetching student from nic')
 
-        console.log(response.text)
-
-        return {
-            username: '',
-            name: '',
-            nim: '',
-            tpbNim: '',
-            email: '',
-            ai3Email: '',
+        let student = {
+            username: undefined,
+            name: undefined,
+            nim: undefined,
+            tpbNim: undefined,
+            email: undefined,
+            ai3Email: undefined,
         }
+        let selector = load(response.text)
+        selector("td").map((i, element) => {
+            let value = element.firstChild.data
+            if (value == undefined || value == null)
+                return
+            
+            if (i == 2)
+                student.username = value.trim()
+            else if (i == 5) {
+                let nim = value.split(",").map(x => x.trim())
+                student.tpbNim = nim[0]
+                student.nim = nim.length < 2 ? student.tpbNim : nim[1]
+            } else if (i == 8)
+                student.name = value.trim()
+            else if (i == 14)
+                student.ai3Email = value.trim().split("(at)").join("@").split("(dot)").join(".")
+            else if (i == 17)
+                student.email = value.trim().split("(at)").join("@").split("(dot)").join(".")
+        })
+
+        if (!student.username)
+            throw new Error('Student not found')
+
+        return student
     }
 
 }
