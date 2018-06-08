@@ -6,7 +6,11 @@ const NIC_LOGIN_URL = "https://login.itb.ac.id/cas/login?service=https%3A%2F%2Fn
 
 const NIC_CHECK_STUDENT_URL = "https://nic.itb.ac.id/manajemen-akun/pengecekan-user"
 
-export class Nic {
+export interface INic {
+    checkStudent(keyword: string): Promise<Student>   
+}
+
+export class Nic implements INic {
 
     private agent: SuperAgent<SuperAgentRequest>
 

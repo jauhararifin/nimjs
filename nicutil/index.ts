@@ -1,4 +1,4 @@
 
 export { Student } from './student'
 
-export { Nic } from './nic'
+export { INic, Nic } from './nic'
