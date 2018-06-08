@@ -725,4 +725,4 @@ export let majors = [
         facultyCode: '163',
         name: 'Teknik Geologi'
     }
-]
+];

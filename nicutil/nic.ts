@@ -1,96 +1,104 @@
-import { Student } from './student'
-import { SuperAgent, agent, SuperAgentRequest, Response } from 'superagent'
-import { load } from 'cheerio'
+import { Student } from './student';
+import { SuperAgent, agent, SuperAgentRequest, Response } from 'superagent';
+import { load } from 'cheerio';
 
-const NIC_LOGIN_URL = "https://login.itb.ac.id/cas/login?service=https%3A%2F%2Fnic.itb.ac.id%2Fmanajemen-akun%2Fpengecekan-user"
+const NIC_LOGIN_URL = "https://login.itb.ac.id/cas/login?service=https%3A%2F%2Fnic.itb.ac.id%2Fmanajemen-akun%2Fpengecekan-user";
 
-const NIC_CHECK_STUDENT_URL = "https://nic.itb.ac.id/manajemen-akun/pengecekan-user"
+const NIC_CHECK_STUDENT_URL = "https://nic.itb.ac.id/manajemen-akun/pengecekan-user";
 
 export interface INic {
-    checkStudent(keyword: string): Promise<Student>   
+    checkStudent(keyword: string): Promise<Student>;   
 }
 
 export class Nic implements INic {
 
-    private agent: SuperAgent<SuperAgentRequest>
+    private agent: SuperAgent<SuperAgentRequest>;
 
-    private hasLoggedIn: boolean = false
+    private hasLoggedIn = false;
 
     constructor(private username: string, private password: string) {
-        this.agent = agent()
+        this.agent = agent();
     }
 
     private async login() {
-        let response = await this.agent.get(NIC_LOGIN_URL)
-        let fields = this.fetchLoginFields(response.text)
-        fields['username'] = this.username
-        fields['password'] = this.password
+        const response = await this.agent.get(NIC_LOGIN_URL);
+        const fields = this.fetchLoginFields(response.text);
+        fields['username'] = this.username;
+        fields['password'] = this.password;
 
-        await this.agent.post(NIC_LOGIN_URL).type('form').send(fields)
+        await this.agent.post(NIC_LOGIN_URL).type('form').send(fields);
     }
 
     private fetchLoginFields(text: string): { [id: string]: string } {
-        let result = {'submit': 'LOGIN'}
-        let selector = load(text)
-        result['lt'] = selector("input[name='lt']").val()
-        result['execution'] = selector("input[name='execution']").val()
-        result['_eventId'] = selector("input[name='_eventId']").val()
-        return result
+        const result = {'submit': 'LOGIN'};
+        const selector = load(text);
+        result['lt'] = selector("input[name='lt']").val();
+        result['execution'] = selector("input[name='execution']").val();
+        result['_eventId'] = selector("input[name='_eventId']").val();
+        return result;
     }
 
     async checkStudent(keyword: string): Promise<Student> {
         if (!this.hasLoggedIn) {
-            await this.login()
-            this.hasLoggedIn = true
+            await this.login();
+            this.hasLoggedIn = true;
         }
 
-        let response: Response = undefined
+        let response: Response = undefined;
         for (let i = 0; i < 5; i++) {
             try {
                 response = await this.agent.post(NIC_CHECK_STUDENT_URL).type('form').send({
                     'uid': keyword,
                     'submit': ' Cari ',
-                })
+                });
             } catch (e) {
-                await this.login()
+                await this.login();
             }
         }
 
-        if (!response)
-            throw new Error('Error fetching student from nic')
+        if (!response) {
+            throw new Error('Error fetching student from nic');
+        }
 
-        let student = {
+        const student = {
             username: undefined,
             name: undefined,
             tpbNim: undefined,
             email: undefined,
             ai3Email: undefined,
-        }
-        let selector = load(response.text)
+        };
+        const selector = load(response.text);
         selector("td").map((i, element) => {
-            let value = element.firstChild.data
-            if (value == undefined || value == null)
-                return
+            const value = element.firstChild.data;
+            if (value == undefined || value == null) {
+                return;
+            }
             
-            if (i == 2)
-                student.username = value.trim()
+            if (i == 2) {
+                student.username = value.trim();
+            }
             else if (i == 5) {
-                let nim = value.split(",").map(x => x.trim())
-                student.tpbNim = nim[0]
-                if (nim.length > 1)
-                    student['nim'] = nim[1]
-            } else if (i == 8)
-                student.name = value.trim()
-            else if (i == 14)
-                student.ai3Email = value.trim().split("(at)").join("@").split("(dot)").join(".")
-            else if (i == 17)
-                student.email = value.trim().split("(at)").join("@").split("(dot)").join(".")
-        })
+                const nim = value.split(",").map(x => x.trim());
+                student.tpbNim = nim[0];
+                if (nim.length > 1) {
+                    student['nim'] = nim[1];
+                }
+            } else if (i == 8) {
+                student.name = value.trim();
+                   }
+            else if (i == 14) {
+                student.ai3Email = value.trim().split("(at)").join("@").split("(dot)").join(".");
+                 }
+            else if (i == 17) {
+                student.email = value.trim().split("(at)").join("@").split("(dot)").join(".");
+                 }
+        });
 
-        if (!student.username)
-            throw new Error('Student not found')
+        if (!student.username) {
+            throw new Error('Student not found');
+        }
 
-        return student
+        return student;
     }
 
 }

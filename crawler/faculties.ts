@@ -52,4 +52,4 @@ export let faculties = [
         code: '921',
         name: 'Non Fakultas/Sekolah'
     },
-]
+];
