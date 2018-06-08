@@ -72,14 +72,23 @@ export class Crawler implements ICrawler {
             
             try {
                 let student = await this.nic.checkStudent(keyword)
-                student['facultyCode'] = student.tpbNim.substr(0, 3)
+                let result = {
+                    ...student,
+                    facultyCode: student.tpbNim.substr(0, 3),   
+                }
                 if (student.nim != student.tpbNim)
-                    student['majorCode'] = student.nim.substr(0, 3)
-                yield student as Student
+                    result['majorCode'] = student.nim.substr(0, 3)
+                yield result
             } catch (e) {
                 queue.push({keyword, tried: tried + 1})
             }
         }
     }
 
+}
+
+export class NicCrawler extends Crawler {
+    constructor(username: string, password: string) {
+        super(new nicutil.Nic(username, password))
+    }
 }
