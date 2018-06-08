@@ -19,7 +19,7 @@ export interface Faculty {
 	name: string;
 }
 
-export interface ICrawler {
+export interface Crawler {
 
 	crawlFaculties(): AsyncIterableIterator<Faculty>;
 
@@ -33,9 +33,9 @@ const MAX_CONSECUTIVE_FAIL_THRESHOLD = 50;
 
 const MAX_RETRY_UNTIL_FAILED = 5;
 
-export class Crawler implements ICrawler {
+export class AbstractCrawler implements Crawler {
 
-    constructor(private nic: nicutil.INic) {
+    constructor(private nic: nicutil.Nic) {
     }
 
     async *crawlFaculties(): AsyncIterableIterator<Faculty> {
@@ -79,7 +79,7 @@ export class Crawler implements ICrawler {
                     ...student,
                     facultyCode: student.tpbNim.substr(0, 3),   
                 };
-                if (student.nim != student.tpbNim) {
+                if (student.nim !== student.tpbNim) {
                     result['majorCode'] = student.nim.substr(0, 3);
                 }
                 yield result;
@@ -91,8 +91,8 @@ export class Crawler implements ICrawler {
 
 }
 
-export class NicCrawler extends Crawler {
+export class NicCrawler extends AbstractCrawler {
     constructor(username: string, password: string) {
-        super(new nicutil.Nic(username, password));
+        super(new nicutil.StandardNic(username, password));
     }
 }

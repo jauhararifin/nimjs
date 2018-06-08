@@ -6,11 +6,11 @@ const NIC_LOGIN_URL = "https://login.itb.ac.id/cas/login?service=https%3A%2F%2Fn
 
 const NIC_CHECK_STUDENT_URL = "https://nic.itb.ac.id/manajemen-akun/pengecekan-user";
 
-export interface INic {
+export interface Nic {
     checkStudent(keyword: string): Promise<Student>;   
 }
 
-export class Nic implements INic {
+export class StandardNic implements Nic {
 
     private agent: SuperAgent<SuperAgentRequest>;
 
@@ -70,26 +70,26 @@ export class Nic implements INic {
         const selector = load(response.text);
         selector("td").map((i, element) => {
             const value = element.firstChild.data;
-            if (value == undefined || value == null) {
+            if (value === undefined || value == null) {
                 return;
             }
             
-            if (i == 2) {
+            if (i === 2) {
                 student.username = value.trim();
             }
-            else if (i == 5) {
+            else if (i === 5) {
                 const nim = value.split(",").map(x => x.trim());
                 student.tpbNim = nim[0];
                 if (nim.length > 1) {
                     student['nim'] = nim[1];
                 }
-            } else if (i == 8) {
+            } else if (i === 8) {
                 student.name = value.trim();
                    }
-            else if (i == 14) {
+            else if (i === 14) {
                 student.ai3Email = value.trim().split("(at)").join("@").split("(dot)").join(".");
                  }
-            else if (i == 17) {
+            else if (i === 17) {
                 student.email = value.trim().split("(at)").join("@").split("(dot)").join(".");
                  }
         });
