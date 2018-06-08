@@ -13,6 +13,7 @@
   "author": "Jauhar Arifin",
   "license": "ISC",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "mongoose": "^5.1.4",
@@ -20,6 +21,7 @@
     "superagent": "^3.8.3"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.7",
     "@types/dotenv": "^4.0.3",
     "@types/express": "^4.16.0",
     "@types/mongoose": "^5.0.15",
