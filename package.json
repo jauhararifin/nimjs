@@ -10,7 +10,8 @@
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "runserver": "node dist/server/server.js"
+    "runserver": "node dist/server/server.js",
+    "watchserver": "nodemon --watch '**/*' --ignore '**/*.spec.ts' --exec 'ts-node' server/server.ts"
   },
   "repository": {
     "type": "git",
