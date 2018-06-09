@@ -6,9 +6,11 @@ import * as morgan from 'morgan';
 import * as errorhandler from "errorhandler";
 
 import * as crawler from '../crawler';
+import * as faculty from '../faculty';
+import * as major from '../major';
 import * as mongoose from "mongoose";
 
-dotenv.config({ path: ".env.example" });
+dotenv.config();
 
 export const app = express();
 
@@ -28,8 +30,13 @@ mongoose.connect(process.env.MONGO_CONNECTION).then(() => {
   process.exit();
 });
 
+
 if (process.env.AI3_ACCOUNT_USERNAME === undefined || process.env.AI3_ACCOUNT_PASSWORD === undefined) {
   console.log('missing ai3 account configuration in environment variables');
   process.exit();
 }
-app.use('/api/v1/crawlers', crawler.getRouter(process.env.AI3_ACCOUNT_USERNAME, process.env.AI3_ACCOUNT_PASSWORD));
+app.use(crawler.router(process.env.AI3_ACCOUNT_USERNAME, process.env.AI3_ACCOUNT_PASSWORD));
+
+app.use(faculty.router());
+
+app.use(major.router());

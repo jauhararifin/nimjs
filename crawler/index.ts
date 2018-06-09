@@ -1,4 +1,4 @@
 
 export { CrawlerService, StandardCrawlerService, NicCrawlerService } from './service';
 
-export { getRouter } from './controller';
+export { getRouter, getRouter as router } from './controller';
