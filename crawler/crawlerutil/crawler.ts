@@ -55,7 +55,7 @@ export class AbstractCrawler implements Crawler {
 
     const yearStr = ("00" + year.toString()).slice(-2);
     const prefix = major + yearStr;
-    const queue = new Array(700).map((val, i) => {
+    const queue = Array.apply(null, {length: 700}).map((val,i) => {
       return {
         keyword: prefix + ("000" + (i+1).toString()).slice(-3),
         tried: 0,
