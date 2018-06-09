@@ -23,4 +23,4 @@ export const majorSchema = new Schema({
 
 });
 
-export const majorModel = model('CrawlerFaculty', majorSchema);
+export const majorModel = model('CrawlerMajor', majorSchema);

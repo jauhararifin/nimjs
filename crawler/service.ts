@@ -3,7 +3,7 @@ import { facultyModel } from "./facultymodel";
 
 export interface CrawlerService {
 
-  crawlAllStundentsInYear(year: number): Promise<void>;
+  crawlAllStudentsInYear(year: number): Promise<void>;
 
   crawlAllStudentsInMajor(majorCode: string): Promise<void>;
 
@@ -12,14 +12,15 @@ export interface CrawlerService {
 }
 
 export class StandardCrawlerService implements CrawlerService {
-  
-  private crawler: Crawler;
 
-  constructor(private crawlerUtil: Crawler) {
+  constructor(private crawler: Crawler) {
   }
 
-  async crawlAllFaculties(): Promise<void> {
+  async crawlAllFaculties(): Promise<string[]> {
+    const facultiesResult: string[] = [];
+    console.log(this.crawler.crawlFaculties());
     for await (const faculty of this.crawler.crawlFaculties()) {
+      facultiesResult.push(faculty.code);
       const facultyInstance = {
         code: faculty.code,
         name: faculty.name,
@@ -30,21 +31,22 @@ export class StandardCrawlerService implements CrawlerService {
         {upsert: true}
       ).exec();
     }
+    return facultiesResult;
   }
 
   async crawlAllMajors(): Promise<void> {
   }
 
-  async crawlAllStundentsInYear(year: number): Promise<void> {
-    throw new Error("Method not implemented.");
+  async crawlAllStudentsInYear(year: number): Promise<void> {
+    await this.crawlAllFaculties();
   }
 
   async crawlAllStudentsInMajor(majorCode: string): Promise<void> {
-    throw new Error("Method not implemented.");
+    await this.crawlAllFaculties();
   }
 
   async crawlAllStudentsInMajorAndYear(majorCode: string, year: number): Promise<void> {
-    throw new Error("Method not implemented.");
+    await this.crawlAllFaculties();
   }
 
 }
