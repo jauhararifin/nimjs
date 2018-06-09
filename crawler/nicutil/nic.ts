@@ -51,8 +51,12 @@ export class StandardNic implements Nic {
           'uid': keyword,
           'submit': ' Cari ',
         });
+        break;
       } catch (e) {
-        await this.login();
+        try {
+          await this.login();
+        } catch (e) {
+        }
       }
     }
 
@@ -90,7 +94,7 @@ export class StandardNic implements Nic {
         student.email = value.trim().split("(at)").join("@").split("(dot)").join(".");
       }
     });
-
+    
     if (!student.username) {
       throw new Error('Student not found');
     }
