@@ -8,6 +8,7 @@ import * as errorhandler from "errorhandler";
 import * as crawler from '../crawler';
 import * as faculty from '../faculty';
 import * as major from '../major';
+import * as student from '../student';
 import * as mongoose from "mongoose";
 
 dotenv.config();
@@ -40,3 +41,5 @@ app.use(crawler.router(process.env.AI3_ACCOUNT_USERNAME, process.env.AI3_ACCOUNT
 app.use(faculty.router());
 
 app.use(major.router());
+
+app.use(student.router());

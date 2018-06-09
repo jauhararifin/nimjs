@@ -1,6 +1,6 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 import { MajorModel, FacultyModel } from '../model';
 import { majors } from '../crawler/crawlerutil/majors';
@@ -18,7 +18,10 @@ export async function findAll(req: Request, res: Response, next: NextFunction) {
 }
 
 export async function findById(req: Request, res: Response) {
-  const major = await MajorModel.findById(req.param['id'] || '').exec();
+  let major = undefined;
+  if (Types.ObjectId.isValid(req.params['id'] || '')) {
+    major = await MajorModel.findById(req.params['id'] || '').exec();
+  }
   if (major === null || major === undefined) {
     return res.status(404).json({'error': 'not found'});
   }
@@ -26,7 +29,10 @@ export async function findById(req: Request, res: Response) {
 }
 
 export async function findAllByFaculty(req:Request, res: Response) {
-  const faculty = await FacultyModel.findById(req.params['facultyId'] || '').exec();
+  let faculty = undefined;
+  if (Types.ObjectId.isValid(req.params['facultyId'] || '')) {
+    faculty = await FacultyModel.findById(req.params['facultyId'] || '').exec();
+  }
   if (faculty === null || faculty === undefined) {
     return res.status(404).json({'error': 'not found'});
   }

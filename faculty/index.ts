@@ -1,6 +1,6 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 import { FacultyModel } from '../model';
 import { faculties } from '../crawler/crawlerutil/faculties';
@@ -17,7 +17,10 @@ export async function findAll(req: Request, res: Response, next: NextFunction) {
 }
 
 export async function findById(req: Request, res: Response) {
-  const faculty = await FacultyModel.findById(req.params['id'] || '').exec();
+  let faculty = undefined;
+  if (Types.ObjectId.isValid(req.params['id'] || '')) {
+    faculty = await FacultyModel.findById(req.params['id'] || '').exec();
+  }
   if (faculty === null || faculty === undefined) {
     return res.status(404).json({'error': 'not found'});
   }
