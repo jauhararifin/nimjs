@@ -29,16 +29,17 @@ export class StandardCrawlerService implements CrawlerService {
           code: faculty.code,
           name: faculty.name,
           updatedAt: new Date(),
+          $setOnInsert: { createdAt: new Date() },
         };
         await facultyModel.findOneAndUpdate(
-          facultyInstance, 
-          { code: faculty.code, $setOnInsert: { createdAt: new Date() } }, 
+          { code: faculty.code },  
+          facultyInstance,
           {upsert: true}
         ).exec();
         facultyCodes.push(faculty.code);
-        log(`faculty ${faculty.code} saved with name ${faculty.name}`);
+        log(`Faculty ${faculty.code} saved with name ${faculty.name}`);
       } catch (err) {
-        log('cannot save faculty result', faculty, err);
+        log('Cannot save faculty result', faculty, err);
       }
     }
     return facultyCodes;
@@ -58,16 +59,17 @@ export class StandardCrawlerService implements CrawlerService {
           name: major.name,
           faculty,
           updatedAt: new Date(),
+          $setOnInsert: { createdAt: new Date() }
         };
         await majorModel.findOneAndUpdate(
-          majorInstance, 
-          { code: major.code, $setOnInsert: { createdAt: new Date() } }, 
+          { code: major.code },
+          majorInstance,
           {upsert: true}
         ).exec();
         majorCodes.push(major.code);
-        log(`faculty ${major.code} saved with name ${major.name}`);
+        log(`Major ${major.code} saved with name ${major.name}`);
       } catch (err) {
-        log('cannot save major resul', major, err);
+        log('Cannot save major result', major, err);
       }
     }
     return majorCodes;
@@ -97,10 +99,11 @@ export class StandardCrawlerService implements CrawlerService {
       faculty,
       major,
       updatedAt: new Date(),
+      $setOnInsert: { createdAt: new Date() }
     };
     await studentModel.findOneAndUpdate(
-      studentInstance, 
-      { tpbNim: student.tpbNim, $setOnInsert: { createdAt: new Date() } }, 
+      { tpbNim: student.tpbNim },
+      studentInstance,
       {upsert: true}
     ).exec();
   }
@@ -110,7 +113,7 @@ export class StandardCrawlerService implements CrawlerService {
       for await (const student of studentIterator) {
         try {
           await this.saveStudent(student);
-          log(`faculty ${student.nim} saved with name ${student.name}`);
+          log(`Student ${student.nim} saved with name ${student.name}`);
         } catch (err) {
           log('Cannot save student', student, err);
         }
@@ -122,8 +125,8 @@ export class StandardCrawlerService implements CrawlerService {
     const faculties = await this.crawlAllFaculties();
     const majors = await this.crawlAllMajors();
 
-    const iterators = faculties.map(majorCode => this.crawler.crawlStudents(majorCode, new Date().getFullYear()));
-    this.crawlStudentIterator(iterators);
+    const iterators = faculties.map(majorCode => this.crawler.crawlStudents(majorCode, year));
+    await this.crawlStudentIterator(iterators);
   }
 
   async crawlAllStudentsInMajor(majorCode: string): Promise<void> {
@@ -136,14 +139,14 @@ export class StandardCrawlerService implements CrawlerService {
     }
 
     const iterators = years.map(year => this.crawler.crawlStudents(majorCode, year));
-    this.crawlStudentIterator(iterators);
+    await this.crawlStudentIterator(iterators);
   }
 
   async crawlAllStudentsInMajorAndYear(majorCode: string, year: number): Promise<void> {
     const faculties = await this.crawlAllFaculties();
     const majors = await this.crawlAllMajors();
 
-    this.crawlStudentIterator([this.crawler.crawlStudents(majorCode, year)]);
+    await this.crawlStudentIterator([this.crawler.crawlStudents(majorCode, year)]);
   }
 
 }
