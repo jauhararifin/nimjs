@@ -41,9 +41,9 @@ export async function findAllByFaculty(req:Request, res: Response) {
 }
 
 const router = Router();
-router.get('/api/v1/majors', findAll);
-router.get('/api/v1/majors/:id', findById);
-router.get('/api/v1/faculties/:facultyId/majors', findAllByFaculty);
+router.get('/majors', findAll);
+router.get('/majors/:id', findById);
+router.get('/faculties/:facultyId/majors', findAllByFaculty);
 
 const getRouter = () => router;
 

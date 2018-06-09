@@ -38,8 +38,11 @@ if (process.env.AI3_ACCOUNT_USERNAME === undefined || process.env.AI3_ACCOUNT_PA
 }
 app.use(crawler.router(process.env.AI3_ACCOUNT_USERNAME, process.env.AI3_ACCOUNT_PASSWORD));
 
-app.use(faculty.router());
+const apiRouter = express.Router();
+apiRouter.use(faculty.router());
+apiRouter.use(major.router());
+apiRouter.use(student.router());
 
-app.use(major.router());
-
-app.use(student.router());
+app.use('/api/v1', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  Promise.resolve(next()).catch(err => res.status(500).json({'error': 'internal server error'}));
+}, apiRouter);

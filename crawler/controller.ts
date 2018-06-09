@@ -38,7 +38,7 @@ export function getRouter(first: CrawlerService | string, second?: string): Rout
   }
 
   const router = Router();
-  return router.post('/api/v1/crawlers', oneOf([
+  return router.post('/crawlers', oneOf([
     body('year').matches('[0-9]{4}'),
     body('code').matches('[0-9]{3}')
   ]), getCrawlerController(crawlerService));

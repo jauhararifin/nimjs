@@ -28,7 +28,7 @@ export async function findById(req: Request, res: Response) {
 }
 
 const router = Router();
-router.get('/api/v1/students/:id', findById);
+router.get('/students/:id', findById);
 const getRouter = () => router;
 
 export { getRouter as router };

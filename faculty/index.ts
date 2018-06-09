@@ -28,8 +28,8 @@ export async function findById(req: Request, res: Response) {
 }
 
 const router = Router();
-router.get('/api/v1/faculties', findAll);
-router.get('/api/v1/faculties/:id', findById);
+router.get('/faculties', findAll);
+router.get('/faculties/:id', findById);
 
 const getRouter = () => router;
 
