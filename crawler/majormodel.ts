@@ -21,6 +21,8 @@ export const majorSchema = new Schema({
 
   createdAt: { type: Date, default: Date.now },
 
+  updatedAt: { type: Date, default: Date.now },
+
 });
 
-export const majorModel = model('CrawlerMajor', majorSchema);
+export const majorModel = model('crawler.major', majorSchema);

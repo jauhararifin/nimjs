@@ -13,6 +13,8 @@ export const facultySchema = new Schema({
 
   createdAt: { type: Date, default: Date.now },
 
+  updatedAt: { type: Date, default: Date.now},
+
 });
 
-export const facultyModel = model('CrawlerFaculty', facultySchema);
+export const facultyModel = model('crawler.faculty', facultySchema);
