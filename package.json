@@ -4,7 +4,13 @@
   "description": "ITB Nim Finder for internal use",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run runserver",
+    "build": "npm run build-ts",
+    "build-ts": "tsc",
+    "watch-ts": "tsc -w",
+    "tslint": "tslint -c tslint.json -p tsconfig.json",
+    "runserver": "node dist/server/server.js"
   },
   "repository": {
     "type": "git",
@@ -13,16 +19,22 @@
   "author": "Jauhar Arifin",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "cheerio": "^1.0.0-rc.2",
+    "compression": "^1.7.2",
     "dotenv": "^6.0.0",
+    "errorhandler": "^1.5.0",
     "express": "^4.16.3",
     "mongoose": "^5.1.4",
     "morgan": "^1.9.0",
     "superagent": "^3.8.3"
   },
   "devDependencies": {
+    "@types/body-parser": "^1.17.0",
     "@types/cheerio": "^0.22.7",
+    "@types/compression": "0.0.36",
     "@types/dotenv": "^4.0.3",
+    "@types/errorhandler": "0.0.32",
     "@types/express": "^4.16.0",
     "@types/mongoose": "^5.0.15",
     "@types/morgan": "^1.7.35",
