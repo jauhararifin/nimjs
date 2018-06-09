@@ -4,6 +4,8 @@ import { majorModel } from './majormodel';
 import { studentModel } from './studentmodel';
 import { Document } from 'mongoose';
 
+const log = require('debug')('nimjs-crawler');
+
 export interface CrawlerService {
 
   crawlAllStudentsInYear(year: number): Promise<void>;
@@ -34,8 +36,9 @@ export class StandardCrawlerService implements CrawlerService {
           {upsert: true}
         ).exec();
         facultyCodes.push(faculty.code);
+        log(`faculty ${faculty.code} saved with name ${faculty.name}`);
       } catch (err) {
-        console.log('cannot save faculty result', faculty, err);
+        log('cannot save faculty result', faculty, err);
       }
     }
     return facultyCodes;
@@ -62,8 +65,9 @@ export class StandardCrawlerService implements CrawlerService {
           {upsert: true}
         ).exec();
         majorCodes.push(major.code);
+        log(`faculty ${major.code} saved with name ${major.name}`);
       } catch (err) {
-        console.log('cannot save major resul', major, err);
+        log('cannot save major resul', major, err);
       }
     }
     return majorCodes;
@@ -105,9 +109,10 @@ export class StandardCrawlerService implements CrawlerService {
     students.forEach(async studentIterator => {
       for await (const student of studentIterator) {
         try {
-          this.saveStudent(student);
+          await this.saveStudent(student);
+          log(`faculty ${student.nim} saved with name ${student.name}`);
         } catch (err) {
-          console.log('Cannot save student', student, err);
+          log('Cannot save student', student, err);
         }
       }
     });
