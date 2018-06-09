@@ -17,7 +17,10 @@ export async function findAll(req: Request, res: Response, next: NextFunction) {
 }
 
 export async function findById(req: Request, res: Response) {
-  const faculty = await FacultyModel.findById(req.param('id', '')).exec();
+  const faculty = await FacultyModel.findById(req.params['id'] || '').exec();
+  if (faculty === null || faculty === undefined) {
+    return res.status(404).json({'error': 'not found'});
+  }
   res.json(serialize(faculty));
 }
 

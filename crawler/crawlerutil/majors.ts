@@ -6,6 +6,11 @@ export let majors = [
     name: 'Teknik dan Pengelolaan Sumber Daya Air'
   },
   {
+    code: '155',
+    facultyCode: '166',
+    name: 'Teknik Kelautan'
+  },
+  {
     code: '352',
     facultyCode: '199',
     name: 'Arsitektur'

@@ -36,7 +36,7 @@ export class StandardCrawlerService implements CrawlerService {
             issuedAt: new Date(),
             operation: 'insert',
             type: 'faculty',
-            faculty: facultyInstance, 
+            payload: facultyInstance, 
           }).save();
         } else if (oldFaculty.get('name') !== faculty.name) {
           const facultyInstance = await oldFaculty
@@ -47,7 +47,7 @@ export class StandardCrawlerService implements CrawlerService {
             issuedAt: new Date(),
             operation: 'update',
             type: 'faculty',
-            faculty: facultyInstance, 
+            payload: facultyInstance, 
           }).save();
         }
 
@@ -75,6 +75,7 @@ export class StandardCrawlerService implements CrawlerService {
           const majorInstance = await new MajorModel({
             code: major.code,
             name: major.name,
+            faculty,
             updatedAt: new Date(),
             createdAt: new Date(),
           }).save();
@@ -82,18 +83,19 @@ export class StandardCrawlerService implements CrawlerService {
             issuedAt: new Date(),
             operation: 'insert',
             type: 'major',
-            major: majorInstance, 
+            payload: majorInstance, 
           }).save();
         } else if (oldMajor.get('name') !== major.name) {
           const majorInstance = await oldMajor
             .set('name', major.name)
+            .set('faculty', faculty)
             .set('updatedAt', new Date())
             .save();
           await new LogModel({
             issuedAt: new Date(),
             operation: 'update',
             type: 'major',
-            major: majorInstance, 
+            payload: majorInstance, 
           }).save();
         }
 
@@ -139,7 +141,7 @@ export class StandardCrawlerService implements CrawlerService {
         issuedAt: new Date(),
         operation: 'insert',
         type: 'student',
-        student: studentInstance, 
+        payload: studentInstance, 
       }).save();
     } else if (oldStudent.get('nim') !== student.nim) {
       const studentInstance = await oldStudent
@@ -150,7 +152,7 @@ export class StandardCrawlerService implements CrawlerService {
         issuedAt: new Date(),
         operation: 'update',
         type: 'student',
-        student: studentInstance, 
+        payload: studentInstance, 
       }).save();
     }
   }

@@ -19,11 +19,7 @@ export const logSchema = new Schema({
     enum: ['faculty', 'major', 'student']
   },
 
-  faculty: facultySchema,
-
-  major: majorSchema,
-
-  student: studentSchema,
+  payload: Schema.Types.Mixed,
 
 });
 
