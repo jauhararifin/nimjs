@@ -1,7 +1,5 @@
 import { Crawler, NicCrawler, Student } from './crawlerutil';
-import { facultyModel } from './facultymodel';
-import { majorModel } from './majormodel';
-import { studentModel } from './studentmodel';
+import { FacultyModel, MajorModel, StudentModel } from '../model';
 import { Document } from 'mongoose';
 
 const log = require('debug')('nimjs-crawler');
@@ -31,7 +29,7 @@ export class StandardCrawlerService implements CrawlerService {
           updatedAt: new Date(),
           $setOnInsert: { createdAt: new Date() },
         };
-        await facultyModel.findOneAndUpdate(
+        await FacultyModel.findOneAndUpdate(
           { code: faculty.code },  
           facultyInstance,
           {upsert: true}
@@ -49,7 +47,7 @@ export class StandardCrawlerService implements CrawlerService {
     const majorCodes: string[] = [];
     for await (const major of this.crawler.crawlMajors()) {
       try {
-        const faculty = await facultyModel.findOne({code: major.facultyCode}).exec();
+        const faculty = await FacultyModel.findOne({code: major.facultyCode}).exec();
         if (!faculty) {
           throw new Error('No coresponding faculty found');
         }
@@ -61,7 +59,7 @@ export class StandardCrawlerService implements CrawlerService {
           updatedAt: new Date(),
           $setOnInsert: { createdAt: new Date() }
         };
-        await majorModel.findOneAndUpdate(
+        await MajorModel.findOneAndUpdate(
           { code: major.code },
           majorInstance,
           {upsert: true}
@@ -76,14 +74,14 @@ export class StandardCrawlerService implements CrawlerService {
   }
 
   private async saveStudent(student: Student): Promise<void> {
-    const faculty = await facultyModel.findOne({code: student.facultyCode}).exec();
+    const faculty = await FacultyModel.findOne({code: student.facultyCode}).exec();
     if (!faculty) {
       throw new Error('No coresponding faculty found');
     }
 
     let major: Document = undefined;
     if (student.majorCode !== undefined) {
-      major = await majorModel.findOne({code: student.majorCode}).exec();
+      major = await MajorModel.findOne({code: student.majorCode}).exec();
       if (!major) {
         throw new Error('No coresponding major found');
       }
@@ -101,7 +99,7 @@ export class StandardCrawlerService implements CrawlerService {
       updatedAt: new Date(),
       $setOnInsert: { createdAt: new Date() }
     };
-    await studentModel.findOneAndUpdate(
+    await StudentModel.findOneAndUpdate(
       { tpbNim: student.tpbNim },
       studentInstance,
       {upsert: true}
