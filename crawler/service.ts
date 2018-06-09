@@ -1,5 +1,5 @@
 import { Crawler, NicCrawler, Student } from './crawlerutil';
-import { FacultyModel, MajorModel, StudentModel } from '../model';
+import { FacultyModel, MajorModel, StudentModel, LogModel } from '../model';
 import { Document } from 'mongoose';
 
 const log = require('debug')('nimjs-crawler');
@@ -23,17 +23,34 @@ export class StandardCrawlerService implements CrawlerService {
     const facultyCodes: string[] = [];
     for await (const faculty of this.crawler.crawlFaculties()) {
       try {
-        const facultyInstance = {
-          code: faculty.code,
-          name: faculty.name,
-          updatedAt: new Date(),
-          $setOnInsert: { createdAt: new Date() },
-        };
-        await FacultyModel.findOneAndUpdate(
-          { code: faculty.code },  
-          facultyInstance,
-          {upsert: true}
-        ).exec();
+        const oldFaculty = await FacultyModel.findOne({code: faculty.code}).exec();
+        
+        if (oldFaculty === undefined || oldFaculty === null) {
+          const facultyInstance = await new FacultyModel({
+            code: faculty.code,
+            name: faculty.name,
+            updatedAt: new Date(),
+            createdAt: new Date(),
+          }).save();
+          await new LogModel({
+            issuedAt: new Date(),
+            operation: 'insert',
+            type: 'faculty',
+            faculty: facultyInstance, 
+          }).save();
+        } else if (oldFaculty.get('name') !== faculty.name) {
+          const facultyInstance = await oldFaculty
+            .set('name', faculty.name)
+            .set('updatedAt', new Date())
+            .save();
+          await new LogModel({
+            issuedAt: new Date(),
+            operation: 'update',
+            type: 'faculty',
+            faculty: facultyInstance, 
+          }).save();
+        }
+
         facultyCodes.push(faculty.code);
         log(`Faculty ${faculty.code} saved with name ${faculty.name}`);
       } catch (err) {
@@ -52,18 +69,34 @@ export class StandardCrawlerService implements CrawlerService {
           throw new Error('No coresponding faculty found');
         }
 
-        const majorInstance = {
-          code: major.code,
-          name: major.name,
-          faculty,
-          updatedAt: new Date(),
-          $setOnInsert: { createdAt: new Date() }
-        };
-        await MajorModel.findOneAndUpdate(
-          { code: major.code },
-          majorInstance,
-          {upsert: true}
-        ).exec();
+        const oldMajor = await MajorModel.findOne({code: major.code}).exec();
+        
+        if (oldMajor === undefined || oldMajor === null) {
+          const majorInstance = await new MajorModel({
+            code: major.code,
+            name: major.name,
+            updatedAt: new Date(),
+            createdAt: new Date(),
+          }).save();
+          await new LogModel({
+            issuedAt: new Date(),
+            operation: 'insert',
+            type: 'major',
+            major: majorInstance, 
+          }).save();
+        } else if (oldMajor.get('name') !== major.name) {
+          const majorInstance = await oldMajor
+            .set('name', major.name)
+            .set('updatedAt', new Date())
+            .save();
+          await new LogModel({
+            issuedAt: new Date(),
+            operation: 'update',
+            type: 'major',
+            major: majorInstance, 
+          }).save();
+        }
+
         majorCodes.push(major.code);
         log(`Major ${major.code} saved with name ${major.name}`);
       } catch (err) {
@@ -87,23 +120,39 @@ export class StandardCrawlerService implements CrawlerService {
       }
     }
 
-    const studentInstance = {
-      username: student.username,
-      tpbNim: student.tpbNim,
-      nim: student.nim,
-      ai3Email: student.ai3Email,
-      email: student.email,
-      name: student.name,
-      faculty,
-      major,
-      updatedAt: new Date(),
-      $setOnInsert: { createdAt: new Date() }
-    };
-    await StudentModel.findOneAndUpdate(
-      { tpbNim: student.tpbNim },
-      studentInstance,
-      {upsert: true}
-    ).exec();
+    const oldStudent = await StudentModel.findOne({tpbNim: student.tpbNim}).exec();
+        
+    if (oldStudent === undefined || oldStudent === null) {
+      const studentInstance = await new StudentModel({
+        username: student.username,
+        tpbNim: student.tpbNim,
+        nim: student.nim,
+        ai3Email: student.ai3Email,
+        email: student.email,
+        name: student.name,
+        faculty: faculty.id,
+        major: major.id,
+        updatedAt: new Date(),
+        createdAt: new Date(),
+      }).save();
+      await new LogModel({
+        issuedAt: new Date(),
+        operation: 'insert',
+        type: 'student',
+        student: studentInstance, 
+      }).save();
+    } else if (oldStudent.get('nim') !== student.nim) {
+      const studentInstance = await oldStudent
+        .set('nim', student.nim)
+        .set('updatedAt', new Date())
+        .save();
+      await new LogModel({
+        issuedAt: new Date(),
+        operation: 'update',
+        type: 'student',
+        student: studentInstance, 
+      }).save();
+    }
   }
 
   private async crawlStudentIterator(students: Array<AsyncIterableIterator<Student>>): Promise<void> {
