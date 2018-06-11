@@ -9,6 +9,7 @@ import * as crawler from '../crawler';
 import * as faculty from '../faculty';
 import * as major from '../major';
 import * as student from '../student';
+import * as log from '../log';
 import * as mongoose from "mongoose";
 
 dotenv.config();
@@ -42,6 +43,7 @@ const apiRouter = express.Router();
 apiRouter.use(faculty.router());
 apiRouter.use(major.router());
 apiRouter.use(student.router());
+apiRouter.use(log.router());
 
 app.use('/api/v1', (req: express.Request, res: express.Response, next: express.NextFunction) => {
   Promise.resolve(next()).catch(err => res.status(500).json({'error': 'internal server error'}));
