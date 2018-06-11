@@ -29,15 +29,17 @@ export const logSchema = new Schema({
   payload: Schema.Types.Mixed,
 
 });
-logSchema.plugin(autoincrement.plugin, {
-  model: 'crawler.log',
-  field: 'order',
-});
 
 export interface LogModel extends Model<Document> {
 }
 
 export const createModel = (connection: Connection): LogModel => {
   autoincrement.initialize(connection);
-  return connection.model('crawler.log', logSchema);
+  const newSchema = logSchema.clone();
+  newSchema.plugin(autoincrement.plugin, {
+    model: 'crawler.log',
+    field: 'order',
+  });
+
+  return connection.model('crawler.log', newSchema);
 };

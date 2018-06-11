@@ -46,9 +46,9 @@ export class MajorController {
 
   getRouter(): Router {
     const router = Router();
-    router.get('/majors', this.findAll);
-    router.get('/majors/:id', this.findById);
-    router.get('/faculties/:facultyId/majors', this.findAllByFaculty);
+    router.get('/majors', this.findAll.bind(this));
+    router.get('/majors/:id', this.findById.bind(this));
+    router.get('/faculties/:facultyId/majors', this.findAllByFaculty.bind(this));
     return router;
   }
 

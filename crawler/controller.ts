@@ -33,6 +33,8 @@ export class CrawlerController {
     } else {
       this.crawlerService = first;
     }
+
+    this.crawl = this.crawl.bind(this);
   }
 
   async crawl(req: Request, res: Response) {

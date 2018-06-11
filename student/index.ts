@@ -33,7 +33,7 @@ export class StudentController {
 
   getRouter(): Router {
     const router = Router();
-    router.get('/students/:id', this.findById);
+    router.get('/students/:id', this.findById.bind(this));
     const getRouter = () => router;
     return router;
   }

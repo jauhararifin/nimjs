@@ -34,8 +34,8 @@ export class FacultyController {
 
   getRouter(): Router {
     const router = Router();
-    router.get('/faculties', this.findAll);
-    router.get('/faculties/:id', this.findById);
+    router.get('/faculties', this.findAll.bind(this));
+    router.get('/faculties/:id', this.findById.bind(this));
     return router;
   }
 

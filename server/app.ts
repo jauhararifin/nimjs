@@ -16,12 +16,12 @@ dotenv.config();
 
 // initialize default mongoose connection
 const mongooseDefaultConnection = mongoose.createConnection(process.env.MONGO_CONNECTION);
-mongooseDefaultConnection.on('connected', () => console.log('Mongoose default connected'));
 mongooseDefaultConnection.on('error', err => {
   console.log('Mongoose default connection error: ' + err);
   process.exit();
 }); 
 mongooseDefaultConnection.on('disconnected', () => console.log('Mongoose default disconnected'));
+mongooseDefaultConnection.on('connected', () => console.log('Mongoose default connected'));
 
 // initialize default mongoose models
 const defaultFacultyModel = model.createFacultyModel(mongooseDefaultConnection);

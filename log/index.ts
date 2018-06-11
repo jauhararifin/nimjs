@@ -50,8 +50,8 @@ export class LogController {
 
   getRouter(): Router {
     const router = Router();
-    router.get('/logs', this.findAll);
-    router.get('/logs/:id', this.findById);
+    router.get('/logs', this.findAll.bind(this));
+    router.get('/logs/:id', this.findById.bind(this));
     return router;
   }
 
