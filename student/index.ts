@@ -26,7 +26,7 @@ export class StudentController {
       student = await this.studentModel.findById(req.params['id'] || '').exec();
     }
     if (student === null || student === undefined) {
-      return res.status(404).json({'error': 'not found'});
+      return res.status(404).json({'code': 400, 'message': 'not found'});
     }
     res.json(serialize(student));
   }

@@ -8,7 +8,6 @@ info:
 schemes:
   - http
   - https
-host: localhost:3000
 basePath: /api/v1
 
 paths:
@@ -214,11 +213,10 @@ definitions:
       name:
         type: string
         description: faculty's name.
-    example: {
-      "id": "5b1b9ca8253adb543bbf84c1",
-      "code": "135",
-      "name": "Teknik Informatika"
-    }
+    example:
+      id: 5b1b9ca8253adb543bbf84c1
+      code: 135
+      name: Teknik Informatika
 
   Major:
     required:
@@ -239,12 +237,11 @@ definitions:
       faculty:
         type: string
         description: faculty's id of faculty that the major belong to.
-    example: {
-      "id": "5b1b9ca8253adb543bbf84c2",
-      "code": "165",
-      "name": "Sekolah Teknik Elektro dan Informatika",
-      "faculty": "5b1b9ca8253adb543bbf84c1"
-    }
+    example:
+      id: 5b1b9ca8253adb543bbf84c2
+      code: 165
+      name: Sekolah Teknik Elektro dan Informatika
+      faculty: 5b1b9ca8253adb543bbf84c1
 
   Student:
     required:
@@ -287,17 +284,16 @@ definitions:
       faculty:
         type: string
         description: faculty's id of faculty that the student belong to.
-    example: {
-      "id": "5b1b9ca8253adb543bbf84c3",
-      "username": "jauhararifin",
-      "ai3Email": "jauhararifin@students.itb.ac.id",
-      "email": "jauhararifin10@gmail.com",
-      "tpbNim": "16515317",
-      "nim": "13515049",
-      "name": "Sekolah Teknik Elektro dan Informatika",
-      "major": "5b1b9ca8253adb543bbf84c2",
-      "faculty": "5b1b9ca8253adb543bbf84c1"
-    }
+    example:
+      id: 5b1b9ca8253adb543bbf84c3
+      username: jauhararifin
+      ai3Email: jauhararifin@students.itb.ac.id
+      email: jauhararifin10@gmail.com
+      tpbNim: 16515317
+      nim: 13515049
+      name: Sekolah Teknik Elektro dan Informatika
+      major: 5b1b9ca8253adb543bbf84c2
+      faculty: 5b1b9ca8253adb543bbf84c1
 
   Log:
     required:
@@ -329,24 +325,22 @@ definitions:
       payload:
         type: object
         description: payload of the log.
-    example: {
-      "id": "5b1b9ca8253adb543bbf84c4",
-      "order": 1,
-      "type": "student",
-      "issuedAt": "2012-04-23T18:25:43.511Z",
-      "operation": "insert",
-      "payload": {
-        "id": "5b1b9ca8253adb543bbf84c3",
-        "username": "jauhararifin",
-        "ai3Email": "jauhararifin@students.itb.ac.id",
-        "email": "jauhararifin10@gmail.com",
-        "tpbNim": "16515317",
-        "nim": "13515049",
-        "name": "Sekolah Teknik Elektro dan Informatika",
-        "major": "5b1b9ca8253adb543bbf84c2",
-        "faculty": "5b1b9ca8253adb543bbf84c1"
-      }
-    }
+    example:
+      id: 5b1b9ca8253adb543bbf84c4
+      order: 1
+      type: student
+      issuedAt: 2012-04-23T18:25:43.511Z
+      operation: insert
+      payload:
+        id: 5b1b9ca8253adb543bbf84c3
+        username: jauhararifin
+        ai3Email: jauhararifin@students.itb.ac.id
+        email: jauhararifin10@gmail.com
+        tpbNim: 16515317
+        nim: 13515049
+        name: Sekolah Teknik Elektro dan Informatika
+        major: 5b1b9ca8253adb543bbf84c2
+        faculty: 5b1b9ca8253adb543bbf84c1
 
   Error:
     properties:
@@ -354,10 +348,9 @@ definitions:
         type: string
       message:
         type: string
-    example: {
-      "code": 500,
-      "message": "internal server error"
-    }
+    example:
+      code: 500
+      message: internal server error
 
 responses:
   Standard500ErrorResponse:
@@ -369,4 +362,3 @@ responses:
     description: Object not found.
     schema:
       $ref: '#/definitions/Error'
-      

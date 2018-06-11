@@ -3,6 +3,7 @@ import * as bodyParser from "body-parser";
 import * as dotenv from "dotenv";
 import * as compression from 'compression';
 import * as morgan from 'morgan';
+import * as yamljs from 'yamljs';
 
 import * as model from '../model';
 import * as crawler from '../crawler';
@@ -11,6 +12,7 @@ import * as major from '../major';
 import * as student from '../student';
 import * as log from '../log';
 import * as mongoose from "mongoose";
+import * as swagger from 'swagger-ui-express';
 
 dotenv.config();
 
@@ -52,6 +54,11 @@ apiRouter.use((err, req: express.Request, res: express.Response, next: express.N
   });
 });
 
+// mongo admin
+const apiSpec = yamljs.load('api.yaml');
+const swaggerRouter = express.Router();
+swaggerRouter.use('/', swagger.serve, swagger.setup(apiSpec));
+
 export const app = express();
 
 // configure express
@@ -63,3 +70,4 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/v1', apiRouter);
+app.use('/swagger', swaggerRouter);

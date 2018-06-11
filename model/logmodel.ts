@@ -34,6 +34,9 @@ export interface LogModel extends Model<Document> {
 }
 
 export const createModel = (conn: Connection = connection): LogModel => {
+  if (conn.models['crawler.log']){
+    return conn.models['crawler.log'];
+  }
   autoincrement.initialize(conn);
   const newSchema = logSchema.clone();
   newSchema.plugin(autoincrement.plugin, {
