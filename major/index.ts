@@ -30,7 +30,7 @@ export class MajorController {
       major = await this.majorModel.findById(req.params['id'] || '').exec();
     }
     if (major === null || major === undefined) {
-      return res.status(404).json({'error': 'not found'});
+      return res.status(404).json({'code': 400, 'message': 'not found'});
     }
     res.json(serialize(major));
   }
@@ -41,7 +41,7 @@ export class MajorController {
       faculty = await this.facultyModel.findById(req.params['facultyId'] || '').exec();
     }
     if (faculty === null || faculty === undefined) {
-      return res.status(404).json({'error': 'not found'});
+      return res.status(404).json({'code': 400, 'message': 'not found'});
     }
     const majors = await this.majorModel.find({faculty: faculty.id}).exec();
     res.json(majors.map(serialize));

@@ -38,7 +38,7 @@ export class LogController {
       log = await this.logModel.findById(req.params['id'] || '').exec();
     }
     if (log === null || log === undefined) {
-      return res.status(404).json({'error': 'not found'});
+      return res.status(404).json({'code': 400, 'message': 'not found'});
     }
     res.json(serialize(log));
   }

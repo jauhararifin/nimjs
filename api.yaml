@@ -1,0 +1,372 @@
+swagger: "2.0"
+
+info:
+  version: 1.0.0
+  title: Nim Finder API
+  description: Simple API for search and crawl nim in ITB.
+
+schemes:
+  - http
+  - https
+host: localhost:3000
+basePath: /api/v1
+
+paths:
+  /faculties:
+    get:
+      summary: get all faculties.
+      description: get all known faculties in ITB.
+      responses:
+        200:
+          description: success, give list of all known faculties in ITB.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Faculty'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Faculty]
+
+  /faculties/{id}:
+    get:
+      summary: get faculty detail.
+      description: get specific faculty information detail based on its id.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: the faculty id.
+          type: string
+      responses:
+        200:
+          description: success, give detail of specific faculty with the id.
+          schema:
+            $ref: '#/definitions/Faculty'
+        404:
+          $ref: '#/responses/Standard404ErrorResponse'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Faculty]
+
+  /majors:
+    get:
+      summary: get all majors
+      description: get all known majors in ITB.
+      responses:
+        200:
+          description: success, give list of all known majors in ITB.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Major'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Major]
+
+
+  /faculties/{id}/majors:
+    get:
+      summary: get all majors in a faculty
+      description: get all known majors that belong to a faculty.
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: the faculty id.
+          type: string
+      responses:
+        200:
+          description: success, give list of all known majors in specific faculty.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Major'
+        404:
+          $ref: '#/responses/Standard404ErrorResponse'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Faculty, Major]
+
+  /majors/{id}:
+    get:
+      summary: get major detail
+      description: get specific major information detail based on its id.
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: the major id.
+          type: string
+      responses:
+        200:
+          description: success, give specific information of major with given id.
+          schema:
+            $ref: '#/definitions/Major'
+        404:
+          $ref: '#/responses/Standard404ErrorResponse'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Major]
+
+  /students/{id}:
+    get:
+      summary: get student detail.
+      description: get specific student information detail based on its id.
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: the student id.
+          type: string
+      responses:
+        200:
+          description: success, give specific information of students with given id.
+          schema:
+            $ref: '#/definitions/Student'
+        404:
+          $ref: '#/responses/Standard404ErrorResponse'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Student]
+
+  /logs:
+    get:
+      summary: get all logs.
+      description: get all logs event that has been happened in system.
+      responses:
+        200:
+          description: success, give all logs that has happened in system.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Log'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Log]
+
+  /logs/{id}:
+    get:
+      summary: get log detail.
+      description: get specific log information detail based on its id.
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: the log id.
+          type: string
+      responses:
+        200:
+          description: success, give specific log information with given id.
+          schema:
+            $ref: '#/definitions/Log'
+        404:
+          $ref: '#/responses/Standard404ErrorResponse'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Log]
+
+  /crawlers:
+    post:
+      summary: send crawl job to system.
+      description: send crawl job request to system.
+      consumes: [application/x-www-form-urlencoded]
+      parameters:
+        - name: year
+          in: formData
+          description: the year to crawl. System will crawl all students in this year batch.
+          type: number
+        - name: major
+          in: formData
+          description: major or faculty code. System will crawl all students that belong to this major or faculty.
+          type: string
+      responses:
+        400:
+          description: validation error, the input may contain invalid data.
+        200:
+          description: success, give information about major and year that system will crawl.
+          schema:
+            required:
+              - major
+              - year
+            properties:
+              major:
+                type: string
+              year:
+                type: string
+          
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Crawler]
+
+definitions:
+  Faculty:
+    required:
+      - id
+      - code
+      - name
+    properties:
+      id:
+        type: string
+        description: faculty's id.
+      code:
+        type: string
+        description: faculty's three digit code.
+      name:
+        type: string
+        description: faculty's name.
+    example: {
+      "id": "5b1b9ca8253adb543bbf84c1",
+      "code": "135",
+      "name": "Teknik Informatika"
+    }
+
+  Major:
+    required:
+      - id
+      - code
+      - name
+      - faculty
+    properties:
+      id:
+        type: string
+        description: major's id.
+      code:
+        type: string
+        description: major's three digit code.
+      name:
+        type: string
+        description: major's name.
+      faculty:
+        type: string
+        description: faculty's id of faculty that the major belong to.
+    example: {
+      "id": "5b1b9ca8253adb543bbf84c2",
+      "code": "165",
+      "name": "Sekolah Teknik Elektro dan Informatika",
+      "faculty": "5b1b9ca8253adb543bbf84c1"
+    }
+
+  Student:
+    required:
+      - id
+      - username
+      - ai3Email
+      - email
+      - tpbNim
+      - nim
+      - name
+      - major
+      - faculty
+    properties:
+      id: 
+        type: string
+        description: student's id
+      username:
+        type: string
+        description: student's ai3 username.
+      ai3Email:
+        type: string
+        format: email
+        description: student's ai3 email.
+      email:
+        type: string
+        format: email
+        description: student's email.
+      tpbNim:
+        type: string
+        description: student's nim when TPB.
+      nim:
+        type: string
+        description: student's current used nim.
+      name:
+        type: string
+        description: student's name.
+      major:
+        type: string
+        description: major's id of major that the student belong to.
+      faculty:
+        type: string
+        description: faculty's id of faculty that the student belong to.
+    example: {
+      "id": "5b1b9ca8253adb543bbf84c3",
+      "username": "jauhararifin",
+      "ai3Email": "jauhararifin@students.itb.ac.id",
+      "email": "jauhararifin10@gmail.com",
+      "tpbNim": "16515317",
+      "nim": "13515049",
+      "name": "Sekolah Teknik Elektro dan Informatika",
+      "major": "5b1b9ca8253adb543bbf84c2",
+      "faculty": "5b1b9ca8253adb543bbf84c1"
+    }
+
+  Log:
+    required:
+      - id
+      - order
+      - type
+      - issuedAt
+      - operation
+      - payload
+    properties:
+      id:
+        type: string
+        description: log's id.
+      order:
+        type: integer
+        description: log's order. Smaller number indicate earlier log than bigger number.
+      type:
+        type: string
+        enum: [faculty, major, student]
+        description: log's type. This type indicate payload data type.
+      issuedAt:
+        type: string
+        format: date-time
+        description: log's issued date.
+      operation:
+        type: string
+        enum: [insert, update]
+        description: log's operation type. What type of operation that happened on system.
+      payload:
+        type: object
+        description: payload of the log.
+    example: {
+      "id": "5b1b9ca8253adb543bbf84c4",
+      "order": 1,
+      "type": "student",
+      "issuedAt": "2012-04-23T18:25:43.511Z",
+      "operation": "insert",
+      "payload": {
+        "id": "5b1b9ca8253adb543bbf84c3",
+        "username": "jauhararifin",
+        "ai3Email": "jauhararifin@students.itb.ac.id",
+        "email": "jauhararifin10@gmail.com",
+        "tpbNim": "16515317",
+        "nim": "13515049",
+        "name": "Sekolah Teknik Elektro dan Informatika",
+        "major": "5b1b9ca8253adb543bbf84c2",
+        "faculty": "5b1b9ca8253adb543bbf84c1"
+      }
+    }
+
+  Error:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    example: {
+      "code": 500,
+      "message": "internal server error"
+    }
+
+responses:
+  Standard500ErrorResponse:
+    description: An unexpected error occured in the server.
+    schema:
+      $ref: '#/definitions/Error'
+      
+  Standard404ErrorResponse:
+    description: Object not found.
+    schema:
+      $ref: '#/definitions/Error'
+      

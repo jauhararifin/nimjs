@@ -27,7 +27,7 @@ export class FacultyController {
       faculty = await this.facultyModel.findById(req.params['id'] || '').exec();
     }
     if (faculty === null || faculty === undefined) {
-      return res.status(404).json({'error': 'not found'});
+      return res.status(404).json({'code': 400, 'message': 'not found'});
     }
     res.json(serialize(faculty));
   }

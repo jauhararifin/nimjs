@@ -46,7 +46,10 @@ apiRouter.use(logController.getRouter());
 // add error handler for api
 apiRouter.use((err, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.log(err);
-  res.status(500).json({'error': 'internal server error'});
+  res.status(500).json({
+    'code': 500,
+    'message': 'internal server error'
+  });
 });
 
 export const app = express();
