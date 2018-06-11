@@ -15,38 +15,25 @@ import * as mongoose from "mongoose";
 dotenv.config();
 
 // initialize default mongoose connection
-const mongooseDefaultConnection = mongoose.createConnection(process.env.MONGO_CONNECTION);
-mongooseDefaultConnection.on('error', err => {
-  console.log('Mongoose default connection error: ' + err);
+mongoose.connect(process.env.MONGO_CONNECTION)
+.then(() => console.log('connected to mongo database'))
+.catch(err => {
+  console.log('failed connect to mongo database ', err);
   process.exit();
-}); 
-mongooseDefaultConnection.on('disconnected', () => console.log('Mongoose default disconnected'));
-mongooseDefaultConnection.on('connected', () => console.log('Mongoose default connected'));
-
-// initialize default mongoose models
-const defaultFacultyModel = model.createFacultyModel(mongooseDefaultConnection);
-const defaultMajorModel = model.createMajorModel(mongooseDefaultConnection);
-const defaultStudentModel = model.createStudentModel(mongooseDefaultConnection);
-const defaultLogModel = model.createLogModel(mongooseDefaultConnection);
+});
 
 // initialize crawler endpoint
 if (process.env.AI3_ACCOUNT_USERNAME === undefined || process.env.AI3_ACCOUNT_PASSWORD === undefined) {
   console.log('missing ai3 account configuration in environment variables');
   process.exit();
 }
-const crawlerController = new crawler.CrawlerController(
-  process.env.AI3_ACCOUNT_USERNAME, process.env.AI3_ACCOUNT_PASSWORD,
-  defaultFacultyModel,
-  defaultMajorModel,
-  defaultStudentModel,
-  defaultLogModel
-);
+const crawlerController = new crawler.CrawlerController(process.env.AI3_ACCOUNT_USERNAME, process.env.AI3_ACCOUNT_PASSWORD,);
 
 // initialize controllers
-const facultyController = new faculty.FacultyController(defaultFacultyModel);
-const majorController = new major.MajorController(defaultFacultyModel, defaultMajorModel);
-const studentController = new student.StudentController(defaultStudentModel);
-const logController = new log.LogController(defaultLogModel);
+const facultyController = new faculty.FacultyController();
+const majorController = new major.MajorController();
+const studentController = new student.StudentController();
+const logController = new log.LogController();
 
 // initialize api endpoint
 const apiRouter = express.Router();
