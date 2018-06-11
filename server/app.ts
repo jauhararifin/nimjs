@@ -3,7 +3,6 @@ import * as bodyParser from "body-parser";
 import * as dotenv from "dotenv";
 import * as compression from 'compression';
 import * as morgan from 'morgan';
-import * as errorhandler from "errorhandler";
 
 import * as crawler from '../crawler';
 import * as faculty from '../faculty';
@@ -23,7 +22,6 @@ app.use(morgan('combined'));
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(errorhandler());
 
 mongoose.connect(process.env.MONGO_CONNECTION).then(() => {
   console.log('  Connected to mongo database');
@@ -45,6 +43,17 @@ apiRouter.use(major.router());
 apiRouter.use(student.router());
 apiRouter.use(log.router());
 
-app.use('/api/v1', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  Promise.resolve(next()).catch(err => res.status(500).json({'error': 'internal server error'}));
-}, apiRouter);
+apiRouter.get('/errors/1', (req, res, next) => {
+  throw new Error('asdf');
+});
+
+apiRouter.get('/errors/2', (req, res, next) => {
+  next(new Error('jauhararifin'));
+});
+
+apiRouter.use((err, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.log(err);
+  res.status(500).json({'error': 'internal server error'});
+});
+
+app.use('/api/v1', apiRouter);
