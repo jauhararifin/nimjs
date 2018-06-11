@@ -2,7 +2,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { Document, Types } from 'mongoose';
 import { majors } from '../crawler/crawlerutil/majors';
-import { FacultyModel, MajorModel } from '../model';
+import { FacultyModel, MajorModel, createFacultyModel, createMajorModel } from '../model';
 
 export const serialize = (major:Document) => ({
   id: major.id,
@@ -13,7 +13,10 @@ export const serialize = (major:Document) => ({
 
 export class MajorController {
 
-  constructor(private facultyModel: FacultyModel, private majorModel: MajorModel) {
+  constructor(
+    private facultyModel: FacultyModel = createFacultyModel(),
+    private majorModel: MajorModel = createMajorModel()
+  ) {
   }
 
   async findAll(req: Request, res: Response, next: NextFunction) {

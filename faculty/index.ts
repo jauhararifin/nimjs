@@ -2,7 +2,7 @@
 import { Router, Request, Response } from 'express';
 import { Document, Types } from 'mongoose';
 
-import { FacultyModel } from '../model';
+import { FacultyModel, createFacultyModel } from '../model';
 import { faculties } from '../crawler/crawlerutil/faculties';
 
 export const serialize = (faculty:Document) => ({
@@ -13,7 +13,7 @@ export const serialize = (faculty:Document) => ({
 
 export class FacultyController {
 
-  constructor(private facultyModel: FacultyModel) {
+  constructor(private facultyModel: FacultyModel = createFacultyModel()) {
   }
 
   async findAll(req: Request, res: Response) {

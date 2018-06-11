@@ -1,7 +1,7 @@
 
 import { Router, Request, Response } from 'express';
 import { Document, Types } from 'mongoose';
-import { StudentModel } from '../model';
+import { StudentModel, createStudentModel } from '../model';
 
 export const serialize = (student:Document) => ({
   id: student.id,
@@ -17,7 +17,7 @@ export const serialize = (student:Document) => ({
 
 export class StudentController {
 
-  constructor(private studentModel: StudentModel) {
+  constructor(private studentModel: StudentModel = createStudentModel()) {
   }
 
   async findById(req: Request, res: Response) {

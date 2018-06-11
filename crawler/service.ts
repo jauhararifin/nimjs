@@ -1,5 +1,8 @@
 import { Crawler, NicCrawler, Student, Major } from './crawlerutil';
-import { FacultyModel, MajorModel, StudentModel, LogModel } from '../model';
+import { 
+  FacultyModel, MajorModel, StudentModel, LogModel,
+  createFacultyModel, createMajorModel, createStudentModel, createLogModel
+} from '../model';
 import { Document } from 'mongoose';
 
 const log = require('debug')('nimjs-crawler');
@@ -18,10 +21,10 @@ export class StandardCrawlerService implements CrawlerService {
 
   constructor(
     private crawler: Crawler,
-    private facultyModel: FacultyModel,
-    private majorModel: MajorModel,
-    private studentModel: StudentModel,
-    private logModel: LogModel
+    private facultyModel: FacultyModel = createFacultyModel(),
+    private majorModel: MajorModel = createMajorModel(),
+    private studentModel: StudentModel = createStudentModel(),
+    private logModel: LogModel = createLogModel()
   ) {
   }
 
@@ -209,10 +212,10 @@ export class StandardCrawlerService implements CrawlerService {
 export class NicCrawlerService extends StandardCrawlerService {
   constructor(
     username: string, password: string,
-    facultyModel: FacultyModel,
-    majorModel: MajorModel,
-    studentModel: StudentModel,
-    logModel: LogModel) {
+    facultyModel: FacultyModel = createFacultyModel(),
+    majorModel: MajorModel = createMajorModel(),
+    studentModel: StudentModel = createStudentModel(),
+    logModel: LogModel = createLogModel()) {
     super(new NicCrawler(username, password), facultyModel, majorModel, studentModel, logModel);
   }
 }

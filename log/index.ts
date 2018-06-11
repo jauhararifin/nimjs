@@ -5,7 +5,7 @@ import { serialize as facultySerialize } from '../faculty';
 import { serialize as majorSerialize } from '../major';
 import { serialize as studentSerialize } from '../student';
 
-import { LogModel, FacultySchema, MajorSchema, StudentSchema } from '../model';
+import { LogModel, createLogModel, FacultySchema, MajorSchema, StudentSchema } from '../model';
 
 const serialize = (log:Document) => {
   const result = {
@@ -29,7 +29,7 @@ const serialize = (log:Document) => {
 
 export class LogController {
 
-  constructor(private logModel: LogModel) {
+  constructor(private logModel: LogModel = createLogModel()) {
   }
 
   async findById(req: Request, res: Response) {
