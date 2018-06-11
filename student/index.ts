@@ -4,7 +4,7 @@ import { Document, Types } from 'mongoose';
 
 import { StudentModel } from '../model';
 
-const serialize = (student:Document) => ({
+export const serialize = (student:Document) => ({
   id: student.id,
   username: student.get('username'),
   email: student.get('email'),

@@ -5,7 +5,7 @@ import { Document, Types } from 'mongoose';
 import { MajorModel, FacultyModel } from '../model';
 import { majors } from '../crawler/crawlerutil/majors';
 
-const serialize = (major:Document) => ({
+export const serialize = (major:Document) => ({
   id: major.id,
   code: major.get('code'),
   name: major.get('name'),
