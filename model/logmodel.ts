@@ -1,6 +1,6 @@
 
 
-import { Schema, model, connection } from 'mongoose';
+import { Schema, Connection, Model, Document } from 'mongoose';
 import { facultySchema } from './facultymodel';
 import { majorSchema } from './majormodel';
 import { studentSchema } from './studentmodel';
@@ -29,11 +29,15 @@ export const logSchema = new Schema({
   payload: Schema.Types.Mixed,
 
 });
-
-autoincrement.initialize(connection);
 logSchema.plugin(autoincrement.plugin, {
   model: 'crawler.log',
   field: 'order',
 });
 
-export const logModel = model('crawler.log', logSchema);
+export interface LogModel extends Model<Document> {
+}
+
+export const createModel = (connection: Connection): LogModel => {
+  autoincrement.initialize(connection);
+  return connection.model('crawler.log', logSchema);
+};

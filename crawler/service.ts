@@ -1,4 +1,4 @@
-import { Crawler, NicCrawler, Student } from './crawlerutil';
+import { Crawler, NicCrawler, Student, Major } from './crawlerutil';
 import { FacultyModel, MajorModel, StudentModel, LogModel } from '../model';
 import { Document } from 'mongoose';
 
@@ -16,23 +16,29 @@ export interface CrawlerService {
 
 export class StandardCrawlerService implements CrawlerService {
 
-  constructor(private crawler: Crawler) {
+  constructor(
+    private crawler: Crawler,
+    private facultyModel: FacultyModel,
+    private majorModel: MajorModel,
+    private studentModel: StudentModel,
+    private logModel: LogModel
+  ) {
   }
 
   private async crawlAllFaculties(): Promise<string[]> {
     const facultyCodes: string[] = [];
     for await (const faculty of this.crawler.crawlFaculties()) {
       try {
-        const oldFaculty = await FacultyModel.findOne({code: faculty.code}).exec();
+        const oldFaculty = await this.facultyModel.findOne({code: faculty.code}).exec();
         
         if (oldFaculty === undefined || oldFaculty === null) {
-          const facultyInstance = await new FacultyModel({
+          const facultyInstance = await new this.facultyModel({
             code: faculty.code,
             name: faculty.name,
             updatedAt: new Date(),
             createdAt: new Date(),
           }).save();
-          await new LogModel({
+          await new this.logModel({
             issuedAt: new Date(),
             operation: 'insert',
             type: 'faculty',
@@ -43,7 +49,7 @@ export class StandardCrawlerService implements CrawlerService {
             .set('name', faculty.name)
             .set('updatedAt', new Date())
             .save();
-          await new LogModel({
+          await new this.logModel({
             issuedAt: new Date(),
             operation: 'update',
             type: 'faculty',
@@ -64,22 +70,22 @@ export class StandardCrawlerService implements CrawlerService {
     const majorCodes: string[] = [];
     for await (const major of this.crawler.crawlMajors()) {
       try {
-        const faculty = await FacultyModel.findOne({code: major.facultyCode}).exec();
+        const faculty = await this.facultyModel.findOne({code: major.facultyCode}).exec();
         if (!faculty) {
           throw new Error('No coresponding faculty found');
         }
 
-        const oldMajor = await MajorModel.findOne({code: major.code}).exec();
+        const oldMajor = await this.majorModel.findOne({code: major.code}).exec();
         
         if (oldMajor === undefined || oldMajor === null) {
-          const majorInstance = await new MajorModel({
+          const majorInstance = await new this.majorModel({
             code: major.code,
             name: major.name,
             faculty,
             updatedAt: new Date(),
             createdAt: new Date(),
           }).save();
-          await new LogModel({
+          await new this.logModel({
             issuedAt: new Date(),
             operation: 'insert',
             type: 'major',
@@ -91,7 +97,7 @@ export class StandardCrawlerService implements CrawlerService {
             .set('faculty', faculty)
             .set('updatedAt', new Date())
             .save();
-          await new LogModel({
+          await new this.logModel({
             issuedAt: new Date(),
             operation: 'update',
             type: 'major',
@@ -109,23 +115,23 @@ export class StandardCrawlerService implements CrawlerService {
   }
 
   private async saveStudent(student: Student): Promise<void> {
-    const faculty = await FacultyModel.findOne({code: student.facultyCode}).exec();
+    const faculty = await this.facultyModel.findOne({code: student.facultyCode}).exec();
     if (!faculty) {
       throw new Error('No coresponding faculty found');
     }
 
     let major: Document = undefined;
     if (student.majorCode !== undefined) {
-      major = await MajorModel.findOne({code: student.majorCode}).exec();
+      major = await this.majorModel.findOne({code: student.majorCode}).exec();
       if (!major) {
         throw new Error('No coresponding major found');
       }
     }
 
-    const oldStudent = await StudentModel.findOne({tpbNim: student.tpbNim}).exec();
+    const oldStudent = await this.studentModel.findOne({tpbNim: student.tpbNim}).exec();
         
     if (oldStudent === undefined || oldStudent === null) {
-      const studentInstance = await new StudentModel({
+      const studentInstance = await new this.studentModel({
         username: student.username,
         tpbNim: student.tpbNim,
         nim: student.nim,
@@ -137,7 +143,7 @@ export class StandardCrawlerService implements CrawlerService {
         updatedAt: new Date(),
         createdAt: new Date(),
       }).save();
-      await new LogModel({
+      await new this.logModel({
         issuedAt: new Date(),
         operation: 'insert',
         type: 'student',
@@ -148,7 +154,7 @@ export class StandardCrawlerService implements CrawlerService {
         .set('nim', student.nim)
         .set('updatedAt', new Date())
         .save();
-      await new LogModel({
+      await new this.logModel({
         issuedAt: new Date(),
         operation: 'update',
         type: 'student',
@@ -201,7 +207,12 @@ export class StandardCrawlerService implements CrawlerService {
 }
 
 export class NicCrawlerService extends StandardCrawlerService {
-  constructor(username: string, password: string) {
-    super(new NicCrawler(username, password));
+  constructor(
+    username: string, password: string,
+    facultyModel: FacultyModel,
+    majorModel: MajorModel,
+    studentModel: StudentModel,
+    logModel: LogModel) {
+    super(new NicCrawler(username, password), facultyModel, majorModel, studentModel, logModel);
   }
 }

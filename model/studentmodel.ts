@@ -1,6 +1,6 @@
 
 
-import { Schema, model } from 'mongoose';
+import { Schema, Connection, Model, Document } from 'mongoose';
 import { facultySchema } from './facultymodel';
 import { majorSchema } from './majormodel';
 
@@ -47,4 +47,7 @@ export const studentSchema = new Schema({
 
 });
 
-export const studentModel = model('crawler.student', studentSchema);
+export interface StudentModel extends Model<Document> {
+}
+
+export const createModel = (connection: Connection): StudentModel => connection.model('crawler.student', studentSchema);

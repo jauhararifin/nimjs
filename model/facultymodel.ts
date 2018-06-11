@@ -1,5 +1,5 @@
 
-import { Schema, model } from 'mongoose';
+import { Schema, Connection, Model, Document } from 'mongoose';
 
 export const facultySchema = new Schema({
 
@@ -17,4 +17,7 @@ export const facultySchema = new Schema({
 
 });
 
-export const facultyModel = model('crawler.faculty', facultySchema);
+export interface FacultyModel extends Model<Document> {
+}
+
+export const createModel = (connection: Connection): FacultyModel => connection.model('crawler.faculty', facultySchema);

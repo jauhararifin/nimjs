@@ -27,25 +27,32 @@ const serialize = (log:Document) => {
   return result;
 };
 
-export async function findById(req: Request, res: Response) {
-  let log = undefined;
-  if (Types.ObjectId.isValid(req.params['id'] || '')) {
-    log = await LogModel.findById(req.params['id'] || '').exec();
+export class LogController {
+
+  constructor(private logModel: LogModel) {
   }
-  if (log === null || log === undefined) {
-    return res.status(404).json({'error': 'not found'});
+
+  async findById(req: Request, res: Response) {
+    let log = undefined;
+    if (Types.ObjectId.isValid(req.params['id'] || '')) {
+      log = await this.logModel.findById(req.params['id'] || '').exec();
+    }
+    if (log === null || log === undefined) {
+      return res.status(404).json({'error': 'not found'});
+    }
+    res.json(serialize(log));
   }
-  res.json(serialize(log));
+  
+  async findAll(req: Request, res: Response) {
+    const logs = await this.logModel.find().sort('order').exec();
+    res.json(logs.map(serialize));
+  }
+
+  getRouter(): Router {
+    const router = Router();
+    router.get('/logs', this.findAll);
+    router.get('/logs/:id', this.findById);
+    return router;
+  }
+
 }
-
-export async function findAll(req: Request, res: Response) {
-  const logs = await LogModel.find().sort('order').exec();
-  res.json(logs.map(serialize));
-}
-
-const router = Router();
-router.get('/logs', findAll);
-router.get('/logs/:id', findById);
-const getRouter = () => router;
-
-export { getRouter as router };

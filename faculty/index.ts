@@ -1,5 +1,5 @@
 
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response } from 'express';
 import { Document, Types } from 'mongoose';
 
 import { FacultyModel } from '../model';
@@ -11,26 +11,32 @@ export const serialize = (faculty:Document) => ({
   name: faculty.get('name'),
 });
 
-export async function findAll(req: Request, res: Response, next: NextFunction) {
-  const faculties = await FacultyModel.find().exec();
-  res.json(faculties.map(serialize));
-}
+export class FacultyController {
 
-export async function findById(req: Request, res: Response) {
-  let faculty = undefined;
-  if (Types.ObjectId.isValid(req.params['id'] || '')) {
-    faculty = await FacultyModel.findById(req.params['id'] || '').exec();
+  constructor(private facultyModel: FacultyModel) {
   }
-  if (faculty === null || faculty === undefined) {
-    return res.status(404).json({'error': 'not found'});
+
+  async findAll(req: Request, res: Response) {
+    const faculties = await this.facultyModel.find().exec();
+    res.json(faculties.map(serialize));
   }
-  res.json(serialize(faculty));
+  
+  async findById(req: Request, res: Response) {
+    let faculty = undefined;
+    if (Types.ObjectId.isValid(req.params['id'] || '')) {
+      faculty = await this.facultyModel.findById(req.params['id'] || '').exec();
+    }
+    if (faculty === null || faculty === undefined) {
+      return res.status(404).json({'error': 'not found'});
+    }
+    res.json(serialize(faculty));
+  }
+
+  getRouter(): Router {
+    const router = Router();
+    router.get('/faculties', this.findAll);
+    router.get('/faculties/:id', this.findById);
+    return router;
+  }
+
 }
-
-const router = Router();
-router.get('/faculties', findAll);
-router.get('/faculties/:id', findById);
-
-const getRouter = () => router;
-
-export { getRouter as router };
