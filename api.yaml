@@ -224,6 +224,123 @@ paths:
           $ref: '#/responses/Standard500ErrorResponse'
       tags: [Crawler]
 
+  /searchers/faculties:
+    get:
+      summary: search faculties.
+      description: search all faculties that matching the given keyword. The result could be very large and divided into several page.
+      parameters:
+        - name: page
+          in: query
+          description: the page number.
+          type: number
+          default: 1
+        - name: count
+          in: query
+          description: the number of item per page.
+          type: number
+          default: 30
+        - name: keyword
+          in: query
+          required: true
+          description: the query keyword
+          type: string
+      responses:
+        400:
+          description: validation error, the input may contain invalid data.
+        404:
+          $ref: '#/responses/Standard404ErrorResponse'
+        200:
+          description: success, give information about all faculties that match the keyword.
+          schema:
+            properties:
+              pagination:
+                $ref: '#/definitions/Pagination'
+              payload:
+                type: array
+                items:
+                  $ref: '#/definitions/Faculty'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Searcher]
+
+  /searchers/majors:
+    get:
+      summary: search majors.
+      description: search all majors that matching the given keyword. The result could be very large and divided into several page.
+      parameters:
+        - name: page
+          in: query
+          description: the page number.
+          type: number
+          default: 1
+        - name: count
+          in: query
+          description: the number of item per page.
+          type: number
+          default: 30
+        - name: keyword
+          in: query
+          required: true
+          description: the query keyword
+          type: string
+      responses:
+        400:
+          description: validation error, the input may contain invalid data.
+        404:
+          $ref: '#/responses/Standard404ErrorResponse'
+        200:
+          description: success, give information about all majors that match the keyword.
+          schema:
+            properties:
+              pagination:
+                $ref: '#/definitions/Pagination'
+              payload:
+                type: array
+                items:
+                  $ref: '#/definitions/Major'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Searcher]
+
+  /searchers/students:
+    get:
+      summary: search students.
+      description: search all students that matching the given keyword. The result could be very large and divided into several page.
+      parameters:
+        - name: page
+          in: query
+          description: the page number.
+          type: number
+          default: 1
+        - name: count
+          in: query
+          description: the number of item per page.
+          type: number
+          default: 30
+        - name: keyword
+          in: query
+          required: true
+          description: the query keyword
+          type: string
+      responses:
+        400:
+          description: validation error, the input may contain invalid data.
+        404:
+          $ref: '#/responses/Standard404ErrorResponse'
+        200:
+          description: success, give information about all students that match the keyword.
+          schema:
+            properties:
+              pagination:
+                $ref: '#/definitions/Pagination'
+              payload:
+                type: array
+                items:
+                  $ref: '#/definitions/Student'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Searcher]
+
 definitions:
   Faculty:
     required:
@@ -368,6 +485,27 @@ definitions:
         name: Sekolah Teknik Elektro dan Informatika
         major: 5b1b9ca8253adb543bbf84c2
         faculty: 5b1b9ca8253adb543bbf84c1
+
+  Pagination:
+    type: object
+    properties:
+      page:
+        type: number
+        description: current page number.
+      totalPage:
+        type: number
+        description: the number of page in total.
+      pageCount:
+        type: number
+        description: the number of items per page.
+      totalCount:
+        type: number
+        description: the number of items in all pages.
+    example:
+      page: 10
+      totalPage: 23
+      pageCount: 30
+      totalCount: 680
 
   Error:
     properties:

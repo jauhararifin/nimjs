@@ -12,6 +12,7 @@ import * as faculty from '../faculty';
 import * as major from '../major';
 import * as student from '../student';
 import * as log from '../log';
+import * as searcher from '../searcher';
 import * as mongoose from "mongoose";
 import * as swagger from 'swagger-ui-express';
 
@@ -37,6 +38,7 @@ const facultyController = new faculty.FacultyController();
 const majorController = new major.MajorController();
 const studentController = new student.StudentController();
 const logController = new log.LogController();
+const searcherController = new searcher.SearcherController();
 
 // initialize api endpoint
 const apiRouter = express.Router();
@@ -45,6 +47,7 @@ apiRouter.use(facultyController.getRouter());
 apiRouter.use(majorController.getRouter());
 apiRouter.use(studentController.getRouter());
 apiRouter.use(logController.getRouter());
+apiRouter.use(searcherController.getRouter());
 
 // add error handler for api
 apiRouter.use((err, req: express.Request, res: express.Response, next: express.NextFunction) => {
