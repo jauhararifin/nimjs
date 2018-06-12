@@ -63,16 +63,7 @@ export class CrawlerController {
   getRouter(): Router {
     const router = Router();
     router.post('/crawlers',
-      (req, res, next) => passport.authenticate('basic', { session: false }, (err, user, info) => {
-        if (!user) {
-          res.status(403).json({
-            'code': 403,
-            'message': 'unauthorized',
-          });
-        } else {
-          next(err);
-        }
-      })(req, res, next),
+      passport.authenticate('basic', { session: false }),
       oneOf([
         body('year').matches('[0-9]{4}'),
         body('code').matches('[0-9]{3}')
