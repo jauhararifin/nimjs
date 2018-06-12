@@ -4,6 +4,7 @@ import * as dotenv from "dotenv";
 import * as compression from 'compression';
 import * as morgan from 'morgan';
 import * as yamljs from 'yamljs';
+import * as actuator from 'express-actuator';
 
 import * as model from '../model';
 import * as crawler from '../crawler';
@@ -54,7 +55,7 @@ apiRouter.use((err, req: express.Request, res: express.Response, next: express.N
   });
 });
 
-// mongo admin
+// swagger admin
 const apiSpec = yamljs.load('api.yaml');
 const swaggerRouter = express.Router();
 swaggerRouter.use('/', swagger.serve, swagger.setup(apiSpec));
@@ -71,3 +72,4 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/v1', apiRouter);
 app.use('/swagger', swaggerRouter);
+app.use(actuator('/management'));
