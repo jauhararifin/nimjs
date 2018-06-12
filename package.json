@@ -30,6 +30,7 @@
     "mongoose": "^5.1.4",
     "mongoose-auto-increment": "^5.0.1",
     "morgan": "^1.9.0",
+    "passport-http": "^0.3.0",
     "superagent": "^3.8.3",
     "swagger-ui-express": "^3.0.9",
     "yamljs": "^0.3.0"
@@ -45,6 +46,7 @@
     "@types/mongoose": "^5.0.15",
     "@types/mongoose-auto-increment": "^5.0.30",
     "@types/morgan": "^1.7.35",
+    "@types/passport-http": "^0.3.6",
     "@types/superagent": "^3.8.0",
     "@types/yamljs": "^0.2.30",
     "nodemon": "^1.17.5",

@@ -1,6 +1,7 @@
 
 import { Request, Response, Router } from 'express';
 import { oneOf, body } from 'express-validator/check';
+import * as passport from 'passport';
 import { CrawlerService, NicCrawlerService } from './service';
 import { 
   FacultyModel, MajorModel, StudentModel, LogModel,
@@ -61,10 +62,23 @@ export class CrawlerController {
 
   getRouter(): Router {
     const router = Router();
-    router.post('/crawlers', oneOf([
-      body('year').matches('[0-9]{4}'),
-      body('code').matches('[0-9]{3}')
-    ]), this.crawl);
+    router.post('/crawlers',
+      (req, res, next) => passport.authenticate('basic', { session: false }, (err, user, info) => {
+        if (!user) {
+          res.status(403).json({
+            'code': 403,
+            'message': 'unauthorized',
+          });
+        } else {
+          next(err);
+        }
+      })(req, res, next),
+      oneOf([
+        body('year').matches('[0-9]{4}'),
+        body('code').matches('[0-9]{3}')
+      ]),
+      this.crawl.bind(this),
+    );
     return router;
   }
 

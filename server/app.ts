@@ -5,6 +5,8 @@ import * as compression from 'compression';
 import * as morgan from 'morgan';
 import * as yamljs from 'yamljs';
 import * as actuator from 'express-actuator';
+import * as passport from 'passport';
+import { BasicStrategy } from 'passport-http';
 
 import * as model from '../model';
 import * as crawler from '../crawler';
@@ -62,6 +64,17 @@ apiRouter.use((err, req: express.Request, res: express.Response, next: express.N
 const apiSpec = yamljs.load('api.yaml');
 const swaggerRouter = express.Router();
 swaggerRouter.use('/', swagger.serve, swagger.setup(apiSpec));
+
+// auth
+const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+const adminPassword = process.env.ADMIN_PASSWORD || 'admin';
+passport.use(new BasicStrategy((userid, password, done) => {
+  if (userid !== adminUsername || password !== adminPassword) {
+    done(null, false);
+  } else {
+    done(null, true);
+  }
+}));
 
 export const app = express();
 
