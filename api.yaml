@@ -164,6 +164,33 @@ paths:
           $ref: '#/responses/Standard500ErrorResponse'
       tags: [Log]
 
+  /sync:
+    get:
+      summary: get some log to synchronize local data with server.
+      description: get all log that comes after some order.
+      parameters:
+        - name: after
+          required: false
+          default: 0
+          in: query
+          description: the log's order of the last synchronized data. Server will give all the log that the order is greater than this value.
+          type: integer
+        - name: count
+          required: false
+          default: 1000
+          in: query
+          description: the number of log returned by server.
+      responses:
+        200:
+          description: success, give array of logs.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Log'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Log]
+
   /crawlers:
     post:
       summary: send crawl job to system.

@@ -4,6 +4,7 @@ import { Document, Types } from 'mongoose';
 import { serialize as facultySerialize } from '../faculty';
 import { serialize as majorSerialize } from '../major';
 import { serialize as studentSerialize } from '../student';
+import { query } from 'express-validator/check';
 
 import { LogModel, createLogModel, FacultySchema, MajorSchema, StudentSchema } from '../model';
 
@@ -48,10 +49,28 @@ export class LogController {
     res.json(logs.map(serialize));
   }
 
+  async findBatch(req: Request, res: Response) {
+    const startOrder = Number.parseInt(req.query['after'] || '0');
+    const count = Number.parseInt(req.query['count'] || '1000');
+
+    const filter = {
+      order: {
+        $gt: startOrder,
+      },
+    };
+
+    const logs = await this.logModel.find(filter).sort('order').limit(count).exec();
+    res.json(logs.map(serialize));
+  }
+
   getRouter(): Router {
     const router = Router();
     router.get('/logs', this.findAll.bind(this));
     router.get('/logs/:id', this.findById.bind(this));
+    router.get('/sync', [
+      query('count').optional().isInt({gt: 29, lt: 3001,}), 
+      query('after').optional().isInt({gt: 0,}),
+    ], this.findBatch.bind(this));
     return router;
   }
 
