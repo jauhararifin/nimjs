@@ -1,14 +1,15 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Model } from 'mongoose';
 import { majors } from '../crawler/crawlerutil/majors';
 import { FacultyModel, MajorModel, createFacultyModel, createMajorModel } from '../model';
+import { serialize as facultySerialize } from '../faculty';
 
 export const serialize = (major:Document) => ({
   id: major.id,
   code: major.get('code'),
   name: major.get('name'),
-  faculty: major.get('faculty'),
+  faculty: major.get('faculty') instanceof Model ? facultySerialize(major.get('faculty')) : major.get('faculty'),
 });
 
 export class MajorController {
@@ -20,14 +21,15 @@ export class MajorController {
   }
 
   async findAll(req: Request, res: Response, next: NextFunction) {
-    const majors = await this.majorModel.find().exec();
+    const majors = await this.majorModel.find().populate('faculty').exec();
     res.json(majors.map(serialize));
   }
 
   async findById(req: Request, res: Response) {
     let major = undefined;
     if (Types.ObjectId.isValid(req.params['id'] || '')) {
-      major = await this.majorModel.findById(req.params['id'] || '').exec();
+      major = await this.majorModel.findById(req.params['id'] || '').populate('faculty').exec();
+      console.log(major);
     }
     if (major === null || major === undefined) {
       return res.status(404).json({'code': 400, 'message': 'not found'});
@@ -44,6 +46,7 @@ export class MajorController {
       return res.status(404).json({'code': 400, 'message': 'not found'});
     }
     const majors = await this.majorModel.find({faculty: faculty.id}).exec();
+    majors.map(major => major.set('faculty', faculty));
     res.json(majors.map(serialize));
   }
 

@@ -19,6 +19,10 @@ export class CachedSearcherService implements SearcherService {
   private majors: Document[];
   private students: Document[];
 
+  private mapIdFaculties: {[id: string]: Document};
+  private mapIdMajors: {[id: string]: Document};
+  private mapIdStudents: {[id: string]: Document};
+
   constructor(
     private facultyModel: FacultyModel = createFacultyModel(),
     private majorModel: MajorModel = createMajorModel(),
@@ -36,6 +40,29 @@ export class CachedSearcherService implements SearcherService {
     this.faculties = await this.facultyModel.find().sort('id').exec();
     this.majors = await this.majorModel.find().sort('id').exec();
     this.students = await this.studentModel.find().sort('id').exec();
+
+    const mapIdFacultiesTemp: {[id: string]: Document} = {};
+    const mapIdMajorsTemp: {[id: string]: Document} = {};
+    const mapIdStudentsTemp: {[id: string]: Document} = {};
+
+    for (const faculty of this.faculties) {
+      mapIdFacultiesTemp[faculty.id.toString()] = faculty;
+    }
+
+    for (const major of this.majors) {
+      mapIdMajorsTemp[major.id.toString()] = major;
+      major.set('faculty', mapIdFacultiesTemp[major.get('faculty').toString()]);
+    }
+
+    for (const student of this.students) {
+      mapIdStudentsTemp[student.id.toString()] = student;
+      student.set('faculty', mapIdFacultiesTemp[student.get('faculty').toString()]);
+      student.set('major', mapIdMajorsTemp[student.get('major').toString()]);
+    }
+
+    this.mapIdFaculties = mapIdFacultiesTemp;
+    this.mapIdMajors = mapIdMajorsTemp;
+    this.mapIdStudents = mapIdStudentsTemp;
   }
 
   private async genericSearch(arrayToSearch: Document[], fields: string[], keyword: string): Promise<Document[]> {

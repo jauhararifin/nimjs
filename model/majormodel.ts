@@ -1,7 +1,6 @@
 
 
 import { Schema, Connection, Model, Document, connection } from 'mongoose';
-import { facultySchema } from './facultymodel';
 
 export const majorSchema = new Schema({
 
@@ -15,7 +14,7 @@ export const majorSchema = new Schema({
 
   faculty: {
     type: Schema.Types.ObjectId,
-    ref: facultySchema,
+    ref: 'crawler.faculty',
     index: true,
   },
 

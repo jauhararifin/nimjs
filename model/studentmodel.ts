@@ -1,8 +1,6 @@
 
 
 import { Schema, Connection, Model, Document, connection } from 'mongoose';
-import { facultySchema } from './facultymodel';
-import { majorSchema } from './majormodel';
 
 export const studentSchema = new Schema({
 
@@ -31,13 +29,13 @@ export const studentSchema = new Schema({
 
   faculty: {
     type: Schema.Types.ObjectId,
-    ref: facultySchema,
+    ref: 'crawler.faculty',
     index: true,
   },
 
   major: {
     type: Schema.Types.ObjectId,
-    ref: majorSchema,
+    ref: 'crawler.major',
     index: true,
   },
 

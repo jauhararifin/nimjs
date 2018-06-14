@@ -1,7 +1,9 @@
 
 import { Router, Request, Response } from 'express';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Model } from 'mongoose';
 import { StudentModel, createStudentModel } from '../model';
+import { serialize as facultySerialize } from '../faculty';
+import { serialize as majorSerialize } from '../major';
 
 export const serialize = (student:Document) => ({
   id: student.id,
@@ -11,8 +13,8 @@ export const serialize = (student:Document) => ({
   tpbNim: student.get('tpbNim'),
   nim: student.get('nim'),
   name: student.get('name'),
-  faculty: student.get('faculty'),
-  major: student.get('major'),
+  faculty: student.get('faculty') instanceof Model ? facultySerialize(student.get('faculty')) : student.get('faculty'),
+  major: student.get('major') instanceof Model ? majorSerialize(student.get('major')) : student.get('major'),
 });
 
 export class StudentController {
@@ -23,7 +25,7 @@ export class StudentController {
   async findById(req: Request, res: Response) {
     let student = undefined;
     if (Types.ObjectId.isValid(req.params['id'] || '')) {
-      student = await this.studentModel.findById(req.params['id'] || '').exec();
+      student = await this.studentModel.findById(req.params['id'] || '').populate('faculty').populate('major').exec();
     }
     if (student === null || student === undefined) {
       return res.status(404).json({'code': 400, 'message': 'not found'});
