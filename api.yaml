@@ -47,6 +47,49 @@ paths:
           $ref: '#/responses/Standard500ErrorResponse'
       tags: [Faculty]
 
+  /majors/{id}/faculty:
+    get:
+      summary: get faculty detail.
+      description: get specific faculty information detail of major's faculty with given id.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: the major id.
+          type: string
+      responses:
+        200:
+          description: success, give detail of specific faculty of major with the given id.
+          schema:
+            $ref: '#/definitions/Faculty'
+        404:
+          $ref: '#/responses/Standard404ErrorResponse'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Faculty, Major]
+
+  /students/{id}/faculty:
+    get:
+      summary: get faculty detail.
+      description: get specific faculty information detail of student's faculty with given id.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: the student id.
+          type: string
+      responses:
+        200:
+          description: success, give detail of specific faculty of student with the given id.
+          schema:
+            $ref: '#/definitions/Faculty'
+        404:
+          $ref: '#/responses/Standard404ErrorResponse'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Faculty, Student]
+
+
   /majors:
     get:
       summary: get all majors
@@ -106,6 +149,27 @@ paths:
         500:
           $ref: '#/responses/Standard500ErrorResponse'
       tags: [Major]
+
+  /students/{id}/major:
+    get:
+      summary: get major detail
+      description: get specific major information detail of student with given id.
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: the student id.
+          type: string
+      responses:
+        200:
+          description: success, give specific information of major of student with given id.
+          schema:
+            $ref: '#/definitions/Major'
+        404:
+          $ref: '#/responses/Standard404ErrorResponse'
+        500:
+          $ref: '#/responses/Standard500ErrorResponse'
+      tags: [Major, Student]
 
   /students/{id}:
     get:
@@ -382,7 +446,7 @@ definitions:
         type: string
         description: major's name.
       faculty:
-        type: string
+        $ref: '#/definitions/Faculty'
         description: faculty's id of faculty that the major belong to.
     example:
       id: 5b1b9ca8253adb543bbf84c2
@@ -426,10 +490,10 @@ definitions:
         type: string
         description: student's name.
       major:
-        type: string
+        $ref: '#/definitions/Major'
         description: major's id of major that the student belong to.
       faculty:
-        type: string
+        $ref: '#/definitions/Faculty'
         description: faculty's id of faculty that the student belong to.
     example:
       id: 5b1b9ca8253adb543bbf84c3
