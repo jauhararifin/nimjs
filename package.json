@@ -13,6 +13,10 @@
     "runserver": "node dist/server/server.js",
     "watchserver": "nodemon --watch '**/*' --ignore '**/*.spec.ts' --exec 'ts-node' server/server.ts"
   },
+  "engines": {
+    "node": "10.4.0",
+    "npm": "6.1.0"
+  },
   "repository": {
     "type": "git",
     "url": "github.com/jauhararifin/nimjs"
