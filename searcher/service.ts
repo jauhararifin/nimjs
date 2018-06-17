@@ -66,7 +66,7 @@ export class CachedSearcherService implements SearcherService {
   }
 
   private async genericSearch(arrayToSearch: Document[], fields: string[], keyword: string): Promise<Document[]> {
-    const keywords = keyword.toLowerCase().split(' ');
+    const keywords = keyword.toLowerCase().split(' ').filter(val => val.length > 0);
     const MAXIMUM_RESULT = 300;
     const result = [];
     for (const document of arrayToSearch) {

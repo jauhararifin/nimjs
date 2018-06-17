@@ -6,6 +6,7 @@ import * as morgan from 'morgan';
 import * as yamljs from 'yamljs';
 import * as actuator from 'express-actuator';
 import * as passport from 'passport';
+import * as cors from 'cors';
 import { BasicStrategy } from 'passport-http';
 
 import * as model from '../model';
@@ -83,6 +84,7 @@ app.set('port', process.env.PORT || 3000);
 app.set('env', process.env.NODE_ENV || 'development');
 app.use(morgan('combined'));
 app.use(compression());
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
