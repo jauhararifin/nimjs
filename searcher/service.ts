@@ -68,20 +68,22 @@ export class CachedSearcherService implements SearcherService {
   private async genericSearch(arrayToSearch: Document[], fields: string[], keyword: string): Promise<Document[]> {
     const keywords = keyword.toLowerCase().split(' ').filter(val => val.length > 0);
     const MAXIMUM_RESULT = 300;
-    const result = [];
-    for (const document of arrayToSearch) {
-      if (result.length >= MAXIMUM_RESULT) {
-        break;
-      }
+
+    const result = arrayToSearch.map(document => {
       const tag = fields.map(param => document.get(param).toString().toLowerCase()).join(' ');
+      let score = 0;
       for (const key of keywords) {
         if (tag.search(key) > -1 || key.search(tag) > -1) {
-          result.push(document);
-          break;   
+          score++;
         }
       }
-    }
-    return result;
+      return { score, document };
+    })
+    .filter(item => item.score > 0)
+    .sort((a,b) => b.score - a.score)
+    .map(item => item.document);
+
+    return result.slice(0, MAXIMUM_RESULT);
   }
 
   async searchFaculty(keyword: string): Promise<Document[]> {
