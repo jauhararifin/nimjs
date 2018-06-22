@@ -22,7 +22,7 @@ import * as swagger from 'swagger-ui-express';
 dotenv.config();
 
 // initialize default mongoose connection
-mongoose.connect(process.env.MONGO_CONNECTION)
+mongoose.connect(process.env.MONGO_URL)
 .then(() => console.log('connected to mongo database'))
 .catch(err => {
   console.log('failed connect to mongo database ', err);
