@@ -267,7 +267,7 @@ paths:
           in: formData
           description: the year to crawl. System will crawl all students in this year batch.
           type: number
-        - name: major
+        - name: code
           in: formData
           description: major or faculty code. System will crawl all students that belong to this major or faculty.
           type: string
