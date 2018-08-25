@@ -1,12 +1,14 @@
 import { Student } from './student';
 import { SuperAgent, agent, SuperAgentRequest, Response } from 'superagent';
 import { load } from 'cheerio';
+import { setTimeout } from 'timers';
 
 const NIC_LOGIN_URL = "https://login.itb.ac.id/cas/login?service=https%3A%2F%2Fnic.itb.ac.id%2Fmanajemen-akun%2Fpengecekan-user";
 
 const NIC_CHECK_STUDENT_URL = "https://nic.itb.ac.id/manajemen-akun/pengecekan-user";
 
 export interface Nic {
+  login(): Promise<void>;
   checkStudent(keyword: string): Promise<Student>;   
 }
 
@@ -15,18 +17,37 @@ export class StandardNic implements Nic {
   private agent: SuperAgent<SuperAgentRequest>;
 
   private hasLoggedIn = false;
+  private loggingIn = false;
 
   constructor(private username: string, private password: string) {
     this.agent = agent();
   }
 
-  private async login() {
-    const response = await this.agent.get(NIC_LOGIN_URL);
-    const fields = this.fetchLoginFields(response.text);
-    fields['username'] = this.username;
-    fields['password'] = this.password;
+  async login() {
+    while (this.loggingIn) {
+      await new Promise(resolve => setTimeout(() => resolve(), 10));
+    }
+    if (this.hasLoggedIn) {
+      return;
+    }
+    this.loggingIn = true;
 
-    await this.agent.post(NIC_LOGIN_URL).type('form').send(fields);
+    let error = null;
+    try {
+      const response = await this.agent.get(NIC_LOGIN_URL);
+      const fields = this.fetchLoginFields(response.text);
+      fields['username'] = this.username;
+      fields['password'] = this.password;
+      await this.agent.post(NIC_LOGIN_URL).type('form').send(fields);
+      this.hasLoggedIn = true;
+    } catch (e) {
+      error = e;
+    }
+
+    this.loggingIn = false;
+    if (error) {
+      throw error;
+    }
   }
 
   private fetchLoginFields(text: string): { [id: string]: string } {
@@ -41,7 +62,6 @@ export class StandardNic implements Nic {
   async checkStudent(keyword: string): Promise<Student> {
     if (!this.hasLoggedIn) {
       await this.login();
-      this.hasLoggedIn = true;
     }
 
     let response: Response = undefined;

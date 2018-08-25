@@ -183,13 +183,13 @@ export class StandardCrawlerService implements CrawlerService {
     const faculties = await this.crawlAllFaculties();
     const majors = await this.crawlAllMajors();
 
-    const iterators = faculties.map(majorCode => this.crawler.crawlStudents(majorCode, year));
+    const iterators = faculties.concat(majors).map(majorCode => this.crawler.crawlStudents(majorCode, year));
     await this.crawlStudentIterator(iterators);
   }
 
   async crawlAllStudentsInMajor(majorCode: string): Promise<void> {
-    const faculties = await this.crawlAllFaculties();
-    const majors = await this.crawlAllMajors();
+    await this.crawlAllFaculties();
+    await this.crawlAllMajors();
 
     const years = [];
     for (let year = 2012; year <= new Date().getFullYear(); year++) {
@@ -201,8 +201,8 @@ export class StandardCrawlerService implements CrawlerService {
   }
 
   async crawlAllStudentsInMajorAndYear(majorCode: string, year: number): Promise<void> {
-    const faculties = await this.crawlAllFaculties();
-    const majors = await this.crawlAllMajors();
+    await this.crawlAllFaculties();
+    await this.crawlAllMajors();
 
     await this.crawlStudentIterator([this.crawler.crawlStudents(majorCode, year)]);
   }
