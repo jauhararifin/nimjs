@@ -74,6 +74,7 @@ export class StandardNic implements Nic {
         break;
       } catch (e) {
         try {
+          this.hasLoggedIn = false;
           await this.login();
         } catch (e) {
         }
