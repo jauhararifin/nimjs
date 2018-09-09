@@ -71,6 +71,9 @@ export class StandardNic implements Nic {
           'uid': keyword,
           'submit': ' Cari ',
         });
+        if (response.text.includes('SSO ITB')) {
+          throw new Error('unauthorized');
+        }
         break;
       } catch (e) {
         try {
