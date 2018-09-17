@@ -1,8 +1,9 @@
 
 import { Router, Request, Response } from 'express';
-import { Document, Types, Model } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { StudentModel, createStudentModel } from '../model';
 import { serialize as majorSerialize } from '../major';
+import { majorSchema } from '../model/majormodel';
 
 export const serialize = (student:Document) => ({
   id: student.id,
@@ -10,7 +11,10 @@ export const serialize = (student:Document) => ({
   email: student.get('email'),
   ai3Email: student.get('ai3Email'),
   name: student.get('name'),
-  majors: student.get('majors').map(majorSerialize),
+  majors: student.get('majors').map(majorStudent => ({
+    nim: majorStudent.get('nim'),
+    major: majorSerialize(majorStudent.get('major', majorSchema)),
+  })),
 });
 
 export class StudentController {
