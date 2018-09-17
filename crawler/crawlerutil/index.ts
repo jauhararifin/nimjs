@@ -1,2 +1,2 @@
 
-export { Faculty, Major, Student, Crawler, AbstractCrawler, NicCrawler } from './crawler';
+export { Major, Student, Crawler, AbstractCrawler, NicCrawler } from './crawler';

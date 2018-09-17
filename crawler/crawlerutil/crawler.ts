@@ -1,27 +1,15 @@
 
 import * as nicutil from '../nicutil';
-import { faculties } from './faculties';
 import { majors } from './majors';
-
-export interface Student extends nicutil.Student {
-  facultyCode: string;
-  majorCode?: string;
-}
 
 export interface Major {
   code: string;
-  facultyCode: string;
   name: string;
 }
 
-export interface Faculty {
-  code: string;
-  name: string;
-}
+export type Student = nicutil.Student;
 
 export interface Crawler {
-
-  crawlFaculties(): AsyncIterableIterator<Faculty>;
 
   crawlMajors(): AsyncIterableIterator<Major>;
 
@@ -36,12 +24,6 @@ const MAX_RETRY_UNTIL_FAILED = 5;
 export class AbstractCrawler implements Crawler {
 
   constructor(private nic: nicutil.Nic) {
-  }
-
-  async *crawlFaculties(): AsyncIterableIterator<Faculty> {
-    for (const faculty of faculties) {
-      yield {...faculty};
-    } 
   }
 
   async *crawlMajors(): AsyncIterableIterator<Major> {
@@ -74,15 +56,7 @@ export class AbstractCrawler implements Crawler {
       }
       
       try {
-        const student = await this.nic.checkStudent(keyword);
-        const result = {
-          ...student,
-          facultyCode: student.tpbNim.substr(0, 3),   
-        };
-        if (student.nim !== student.tpbNim) {
-          result['majorCode'] = student.nim.substr(0, 3);
-        }
-        yield result;
+        yield await this.nic.checkStudent(keyword);
       } catch (e) {
         queue.push({keyword, tried: tried + 1});
       }
