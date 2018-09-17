@@ -10,34 +10,21 @@ export const studentSchema = new Schema({
     unique: true
   },
 
-  tpbNim: {
-    type: String,
-    unique: true
-  },
-
-  nim: {
-    type: String,
-    index: true,
-    unique: true
-  },
+  majors: [
+    new Schema({
+      nim: String,
+      major: {
+        type: Schema.Types.ObjectId,
+        ref: 'crawler.major'
+      }
+    })
+  ],
 
   ai3Email: String,
 
   email: String,
 
   name: String,
-
-  faculty: {
-    type: Schema.Types.ObjectId,
-    ref: 'crawler.faculty',
-    index: true,
-  },
-
-  major: {
-    type: Schema.Types.ObjectId,
-    ref: 'crawler.major',
-    index: true,
-  },
 
   createdAt: { type: Date, default: Date.now },
 

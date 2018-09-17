@@ -1,9 +1,6 @@
 
 
 import { Schema, Connection, Model, Document, connection } from 'mongoose';
-import { facultySchema } from './facultymodel';
-import { majorSchema } from './majormodel';
-import { studentSchema } from './studentmodel';
 import * as autoincrement from 'mongoose-auto-increment';
 
 export const logSchema = new Schema({
@@ -17,7 +14,7 @@ export const logSchema = new Schema({
 
   type: {
     type: String,
-    enum: ['faculty', 'major', 'student']
+    enum: ['major', 'student']
   },
 
   order: {

@@ -12,12 +12,6 @@ export const majorSchema = new Schema({
 
   name: String,
 
-  faculty: {
-    type: Schema.Types.ObjectId,
-    ref: 'crawler.faculty',
-    index: true,
-  },
-
   createdAt: { type: Date, default: Date.now },
 
   updatedAt: { type: Date, default: Date.now },

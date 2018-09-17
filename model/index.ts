@@ -1,5 +1,3 @@
-export { facultySchema as FacultySchema, FacultyModel, createModel as createFacultyModel } from './facultymodel';
-
 export { majorSchema as MajorSchema, MajorModel, createModel as createMajorModel } from './majormodel';
 
 export { studentSchema as StudentSchema, StudentModel, createModel as createStudentModel } from './studentmodel';
