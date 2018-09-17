@@ -4,8 +4,8 @@ import { oneOf, body } from 'express-validator/check';
 import * as passport from 'passport';
 import { CrawlerService, NicCrawlerService } from './service';
 import { 
-  FacultyModel, MajorModel, StudentModel, LogModel,
-  createFacultyModel, createMajorModel, createStudentModel, createLogModel,
+  MajorModel, StudentModel, LogModel,
+  createMajorModel, createStudentModel, createLogModel,
 } from '../model';
 
 const MAJOR_ALL = '<all_major>';
@@ -18,7 +18,6 @@ export class CrawlerController {
 
   constructor(
     username: string, password: string,
-    facultyModel: FacultyModel,
     majorModel: MajorModel,
     studentModel: StudentModel,
     logModel: LogModel
@@ -28,13 +27,12 @@ export class CrawlerController {
   constructor(
     first: CrawlerService | string,
     second?: string,
-    third: FacultyModel = createFacultyModel(),
-    forth: MajorModel = createMajorModel(),
-    fifth: StudentModel = createStudentModel(),
-    sixth: LogModel = createLogModel()
+    third: MajorModel = createMajorModel(),
+    forth: StudentModel = createStudentModel(),
+    fifth: LogModel = createLogModel()
   ) {
     if (typeof first === 'string') {
-      this.crawlerService = new NicCrawlerService(first, second, third, forth, fifth, sixth);
+      this.crawlerService = new NicCrawlerService(first, second, third, forth, fifth);
     } else {
       this.crawlerService = first;
     }
