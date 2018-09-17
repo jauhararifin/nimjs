@@ -2,7 +2,6 @@ import { query } from 'express-validator/check';
 
 import { SearcherService, CachedSearcherService } from '.';
 import { Request, Response, Router } from 'express';
-import { serialize as facultySerialize } from '../faculty';
 import { serialize as majorSerialize } from '../major';
 import { serialize as studentSerialize } from '../student';
 
@@ -39,10 +38,6 @@ export class SearcherController {
 
   }
 
-  private async searchFaculty(req: Request, res: Response) {
-    this.genericSearch(req, res, this.searcherService.searchFaculty.bind(this.searcherService), facultySerialize);
-  }
-
   private async searchMajor(req: Request, res: Response) {
     this.genericSearch(req, res, this.searcherService.searchMajor.bind(this.searcherService), majorSerialize);
   }
@@ -60,7 +55,6 @@ export class SearcherController {
       query('keyword').isString(),
     ];
 
-    router.get('/searchers/faculties', filter, this.searchFaculty.bind(this));
     router.get('/searchers/majors', filter, this.searchMajor.bind(this));
     router.get('/searchers/students', filter, this.searchStudent.bind(this));
     
