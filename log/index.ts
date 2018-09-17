@@ -1,12 +1,11 @@
 
 import { Router, Request, Response } from 'express';
 import { Document, Types } from 'mongoose';
-import { serialize as facultySerialize } from '../faculty';
 import { serialize as majorSerialize } from '../major';
 import { serialize as studentSerialize } from '../student';
 import { query } from 'express-validator/check';
 
-import { LogModel, createLogModel, FacultySchema, MajorSchema, StudentSchema } from '../model';
+import { LogModel, createLogModel, MajorSchema, StudentSchema } from '../model';
 
 const serialize = (log:Document) => {
   const result = {
@@ -17,9 +16,7 @@ const serialize = (log:Document) => {
     order: log.get('order'),
   };
 
-  if (log.get('type') === 'faculty') {
-    result['payload'] = facultySerialize(log.get('payload', FacultySchema));
-  } else if (log.get('type') === 'major') {
+  if (log.get('type') === 'major') {
     result['payload'] = majorSerialize(log.get('payload', MajorSchema));
   } else if (log.get('type') === 'student') {
     result['payload'] = studentSerialize(log.get('payload', StudentSchema));
