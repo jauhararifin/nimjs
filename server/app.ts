@@ -9,9 +9,7 @@ import * as passport from 'passport';
 import * as cors from 'cors';
 import { BasicStrategy } from 'passport-http';
 
-import * as model from '../model';
 import * as crawler from '../crawler';
-import * as faculty from '../faculty';
 import * as major from '../major';
 import * as student from '../student';
 import * as log from '../log';
@@ -37,7 +35,6 @@ if (process.env.AI3_ACCOUNT_USERNAME === undefined || process.env.AI3_ACCOUNT_PA
 const crawlerController = new crawler.CrawlerController(process.env.AI3_ACCOUNT_USERNAME, process.env.AI3_ACCOUNT_PASSWORD,);
 
 // initialize controllers
-const facultyController = new faculty.FacultyController();
 const majorController = new major.MajorController();
 const studentController = new student.StudentController();
 const logController = new log.LogController();
@@ -46,7 +43,6 @@ const searcherController = new searcher.SearcherController();
 // initialize api endpoint
 const apiRouter = express.Router();
 apiRouter.use(crawlerController.getRouter());
-apiRouter.use(facultyController.getRouter());
 apiRouter.use(majorController.getRouter());
 apiRouter.use(studentController.getRouter());
 apiRouter.use(logController.getRouter());
