@@ -2,8 +2,7 @@
 export interface Student {
   username: string;
   name: string;
-  nim?: string;
-  tpbNim: string;
+  nim: string[];
   email: string;
   ai3Email: string;
 }

@@ -91,7 +91,7 @@ export class StandardNic implements Nic {
     const student = {
       username: undefined,
       name: undefined,
-      tpbNim: undefined,
+      nim: [],
       email: undefined,
       ai3Email: undefined,
     };
@@ -105,11 +105,7 @@ export class StandardNic implements Nic {
       if (i === 2) {
         student.username = value.trim();
       } else if (i === 5) {
-        const nim = value.split(",").map(x => x.trim());
-        student.tpbNim = nim[0];
-        if (nim.length > 1) {
-          student['nim'] = nim[1];
-        }
+        student.nim = value.split(",").map(x => x.trim());
       } else if (i === 8) {
         student.name = value.trim();
       } else if (i === 14) {
