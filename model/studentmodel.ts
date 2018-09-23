@@ -17,7 +17,7 @@ export const studentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'crawler.major'
       }
-    })
+    }, { _id: false })
   ],
 
   ai3Email: String,
